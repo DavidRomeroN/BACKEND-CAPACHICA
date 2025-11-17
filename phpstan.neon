@@ -1,0 +1,40 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+    
+    paths:
+        - app
+        - config
+        - database/factories
+        - database/seeders
+        - routes
+    
+    excludePaths:
+        - app/Console/Kernel.php
+        - app/Exceptions/Handler.php
+        - app/Providers/*
+        - database/migrations/*
+    
+    # Ignorar errores específicos
+    ignoreErrors:
+        # Ignorar errores de binding container
+        - '#Unsafe usage of new static#'
+        # Ignorar errores de modelos Eloquent
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\(Builder|Relations\\[a-zA-Z]+)#'
+        # Ignorar errores de facades
+        - '#Access to an undefined property [a-zA-Z\\]+::\$[a-zA-Z]+#'
+    
+    # Configuración para Laravel
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Configuración de memoria
+    tmpDir: build/phpstan
+    
+    # Excluir código de terceros
+    excludePaths:
+        analyseAndScan:
+            - */vendor/*
+
