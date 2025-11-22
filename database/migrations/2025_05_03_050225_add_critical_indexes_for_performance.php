@@ -86,26 +86,50 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reservas', function (Blueprint $table) {
-            $table->dropIndex('idx_reservas_usuario_estado');
-            $table->dropIndex('idx_reservas_estado');
-        });
+        if (Schema::hasTable('reservas')) {
+            try {
+                Schema::table('reservas', function (Blueprint $table) {
+                    $table->dropIndex('idx_reservas_usuario_estado');
+                    $table->dropIndex('idx_reservas_estado');
+                });
+            } catch (\Exception $e) {
+                // Ignorar si el índice no existe
+            }
+        }
 
-        Schema::table('plan_inscripciones', function (Blueprint $table) {
-            $table->dropIndex('idx_plan_inscripciones_user_estado');
-            $table->dropIndex('idx_plan_inscripciones_plan_estado');
-            $table->dropIndex('idx_plan_inscripciones_estado');
-        });
+        if (Schema::hasTable('plan_inscripciones')) {
+            try {
+                Schema::table('plan_inscripciones', function (Blueprint $table) {
+                    $table->dropIndex('idx_plan_inscripciones_user_estado');
+                    $table->dropIndex('idx_plan_inscripciones_plan_estado');
+                    $table->dropIndex('idx_plan_inscripciones_estado');
+                });
+            } catch (\Exception $e) {
+                // Ignorar si el índice no existe
+            }
+        }
 
-        Schema::table('servicios', function (Blueprint $table) {
-            $table->dropIndex('idx_servicios_emprendedor');
-            $table->dropIndex('idx_servicios_estado');
-        });
+        if (Schema::hasTable('servicios')) {
+            try {
+                Schema::table('servicios', function (Blueprint $table) {
+                    $table->dropIndex('idx_servicios_emprendedor');
+                    $table->dropIndex('idx_servicios_estado');
+                });
+            } catch (\Exception $e) {
+                // Ignorar si el índice no existe
+            }
+        }
 
-        Schema::table('reserva_servicios', function (Blueprint $table) {
-            $table->dropIndex('idx_reserva_servicios_reserva_estado');
-            $table->dropIndex('idx_reserva_servicios_servicio');
-        });
+        if (Schema::hasTable('reserva_servicios')) {
+            try {
+                Schema::table('reserva_servicios', function (Blueprint $table) {
+                    $table->dropIndex('idx_reserva_servicios_reserva_estado');
+                    $table->dropIndex('idx_reserva_servicios_servicio');
+                });
+            } catch (\Exception $e) {
+                // Ignorar si el índice no existe
+            }
+        }
     }
 };
 
