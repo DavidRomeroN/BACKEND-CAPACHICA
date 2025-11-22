@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
-echo "🔧 Ejecutando migraciones..."
+echo " Ejecutando migraciones..."
 php artisan migrate --force || true
 
-echo " Optimizando configuración..."
+echo "⚡ Optimizando configuración..."
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true

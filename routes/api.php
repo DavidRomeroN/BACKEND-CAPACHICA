@@ -44,7 +44,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
     // Autenticación
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    
+
     // Rutas para autenticación con Google
     Route::prefix('auth/google')->group(function () {
         Route::get('/', [GoogleAuthController::class, 'redirectToGoogle']);
@@ -88,7 +88,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -106,7 +106,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -117,15 +117,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -151,7 +151,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -169,7 +169,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -180,15 +180,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -213,7 +213,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -231,7 +231,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -242,15 +242,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -269,7 +269,7 @@ Route::prefix('emprendedores')->group(function () {
     Route::get('/{id}/servicios', [EmprendedorController::class, 'getServicios']);
     Route::get('/{id}/relaciones', [EmprendedorController::class, 'getWithRelations']);
     Route::get('/{id}', [EmprendedorController::class, 'show']);
-    
+
 });
 
 // ✅ COMPATIBILIDAD: Rutas alias para frontend web (usa /emprendimientos)
@@ -300,7 +300,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -318,7 +318,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -329,15 +329,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -363,7 +363,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -381,7 +381,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -392,15 +392,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -422,7 +422,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -440,7 +440,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -451,15 +451,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -489,7 +489,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -507,7 +507,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -518,15 +518,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -534,7 +534,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         ], 500);
     }
 });
-    
+
     // ✅ NUEVA: Ruta completamente simple para testing
     Route::post('/test-simple', function(Request $request) {
         try {
@@ -560,13 +560,13 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                 'asociacion_id' => $request->input('asociacion_id'),
                 'usuario_id' => $request->input('usuario_id'),
             ]);
-            
+
             // ✅ PROCESAR IMÁGENES
             $imagenes = [];
-            
+
             // Debug: Log de archivos recibidos
             \Log::info('Archivos recibidos:', $request->allFiles());
-            
+
             // Procesar imagen principal
             if ($request->hasFile('imagen')) {
                 $imagen = $request->file('imagen');
@@ -575,7 +575,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                 $imagenes[] = $ruta;
                 \Log::info('Imagen principal guardada:', ['ruta' => $ruta]);
             }
-            
+
             // Procesar imágenes secundarias
             if ($request->hasFile('imagenes')) {
                 foreach ($request->file('imagenes') as $imagen) {
@@ -585,14 +585,14 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                     \Log::info('Imagen secundaria guardada:', ['ruta' => $ruta]);
                 }
             }
-            
+
             \Log::info('Total imágenes procesadas:', ['count' => count($imagenes), 'imagenes' => $imagenes]);
-            
+
             // Actualizar emprendedor con imágenes
             if (!empty($imagenes)) {
                 $emprendedor->update(['imagenes' => $imagenes]);
             }
-            
+
             // ✅ ASIGNAR USUARIO SI SE PROPORCIONA
             if ($request->has('usuario_id') && $request->usuario_id) {
                 $usuario = \App\Models\User::find($request->usuario_id);
@@ -603,7 +603,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                     ]);
                 }
             }
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Emprendedor creado exitosamente',
@@ -624,7 +624,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -642,7 +642,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -653,15 +653,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -679,19 +679,19 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             \Log::info('FILES COUNT: ' . count($request->allFiles()));
             \Log::info('CONTENT TYPE: ' . $request->header('Content-Type'));
             \Log::info('RAW DATA: ' . json_encode($request->all()));
-            
+
             $emprendedor = \App\Models\Emprendedor::find($id);
             if (!$emprendedor) {
                 return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
             }
-            
+
             // Procesar imágenes
             $imagenes = $emprendedor->imagenes ?? [];
             \Log::info('IMAGENES ACTUALES: ' . json_encode($imagenes));
-            
+
             // Solo procesar imágenes si se envían nuevas
             $hasNewImages = false;
-            
+
             if ($request->hasFile('imagen')) {
                 $imagen = $request->file('imagen');
                 $filename = time() . '_' . $imagen->getClientOriginalName();
@@ -700,7 +700,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                 $hasNewImages = true;
                 \Log::info('IMAGEN GUARDADA: ' . $path);
             }
-            
+
             if ($request->hasFile('imagenes')) {
                 foreach ($request->file('imagenes') as $imagen) {
                     $filename = time() . '_' . $imagen->getClientOriginalName();
@@ -710,24 +710,24 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                     \Log::info('IMAGEN ADICIONAL GUARDADA: ' . $path);
                 }
             }
-            
+
             // Si no hay nuevas imágenes, mantener las existentes
             if (!$hasNewImages) {
                 $imagenes = $emprendedor->imagenes ?? [];
             }
-            
+
             \Log::info('IMAGENES FINALES: ' . json_encode($imagenes));
-            
+
             // ✅ DEBUG: Mostrar valores específicos antes de actualizar
             $opcionesAcceso = $request->input('opciones_acceso');
             \Log::info('OPCIONES_ACCESO INPUT: ' . ($opcionesAcceso ?? 'NULL'));
             \Log::info('OPCIONES_ACCESO ACTUAL: ' . ($emprendedor->opciones_acceso ?? 'NULL'));
-            
+
             // Si no se proporciona opciones_acceso, mantener el valor actual
             if ($opcionesAcceso === null || $opcionesAcceso === '') {
                 $opcionesAcceso = $emprendedor->opciones_acceso;
             }
-            
+
             // Actualizar emprendedor directamente
             $updateData = [
                 'nombre' => $request->input('nombre', $emprendedor->nombre),
@@ -752,23 +752,23 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                 'estado' => $request->input('estado', $emprendedor->estado),
                 'asociacion_id' => $request->input('asociacion_id', $emprendedor->asociacion_id),
             ];
-            
+
             \Log::info('DATOS PARA ACTUALIZAR: ' . json_encode($updateData));
-            
+
             $emprendedor->update($updateData);
-            
+
             // ✅ DEBUG: Verificar que se guardó correctamente
             $emprendedor->refresh();
             \Log::info('DESPUÉS DE ACTUALIZAR - OPCIONES_ACCESO: ' . ($emprendedor->opciones_acceso ?? 'NULL'));
             \Log::info('DESPUÉS DE ACTUALIZAR - IMAGENES: ' . json_encode($emprendedor->imagenes));
-            
+
             \Log::info('=== TEST UPDATE SUCCESS ===');
             return response()->json([
                 'success' => true,
                 'message' => 'Emprendedor actualizado exitosamente',
                 'data' => $emprendedor
             ]);
-            
+
         } catch (\Exception $e) {
             \Log::error('TEST UPDATE ERROR: ' . $e->getMessage());
             return response()->json([
@@ -785,7 +785,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -803,7 +803,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -814,22 +814,21 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
             'message' => 'Error: ' . $e->getMessage()
         ], 500);
     }
-});
 });
 
 // ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
@@ -839,7 +838,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -857,7 +856,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -868,15 +867,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -904,7 +903,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -922,7 +921,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -933,15 +932,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -968,7 +967,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -986,7 +985,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -997,15 +996,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1041,7 +1040,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1059,7 +1058,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1070,15 +1069,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1118,7 +1117,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1136,7 +1135,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1147,15 +1146,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1196,7 +1195,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1214,7 +1213,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1225,15 +1224,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1255,7 +1254,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1273,7 +1272,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1284,15 +1283,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1300,7 +1299,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         ], 500);
     }
 });
-});
+
 
 // ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
 Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
@@ -1309,7 +1308,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1327,7 +1326,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1338,15 +1337,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1365,7 +1364,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Menú dinámico
     Route::get('/menu', [MenuController::class, 'getMenu']);
-    
+
     // ===== RUTAS ESPECÍFICAS PARA EMPRENDEDORES =====
     Route::prefix('emprendedor')->group(function () {
         Route::get('/mis-reservas', [\App\Http\Controllers\API\Emprendedores\EmprendedorDashboardController::class, 'misReservas']);
@@ -1380,7 +1379,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1398,7 +1397,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1409,15 +1408,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1451,7 +1450,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1469,7 +1468,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1480,15 +1479,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1511,7 +1510,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1529,7 +1528,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1540,15 +1539,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1572,7 +1571,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1590,7 +1589,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1601,15 +1600,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1638,7 +1637,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1656,7 +1655,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1667,15 +1666,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1691,7 +1690,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::post('/{id}', [EmprendedorController::class, 'update'])->middleware('permission:emprendedor_update'); // ✅ POST para archivos
         Route::delete('/{id}', [EmprendedorController::class, 'destroy']);
         Route::get('/{id}/reservas', [EmprendedorController::class, 'getReservas']);
-        
+
         // ✅ COMPATIBILIDAD: Rutas alias para frontend web
         Route::post('/{id}/toggle-estado', function($id) {
             $controller = app(EmprendedorController::class);
@@ -1708,7 +1707,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             return response()->json(['success' => true, 'data' => $emprendedor]);
         });
     });
-    
+
     // ✅ COMPATIBILIDAD: Rutas protegidas alias para /emprendimientos
     Route::prefix('emprendimientos')->group(function () {
         Route::post('/', [EmprendedorController::class, 'store'])->middleware('permission:emprendedor_create');
@@ -1756,7 +1755,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1774,7 +1773,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1785,15 +1784,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1813,7 +1812,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1831,7 +1830,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1842,15 +1841,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1873,7 +1872,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1891,7 +1890,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1902,15 +1901,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -1933,7 +1932,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -1951,7 +1950,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -1962,15 +1961,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2005,7 +2004,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2023,7 +2022,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2034,15 +2033,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2059,7 +2058,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2077,7 +2076,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2088,15 +2087,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2129,7 +2128,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2147,7 +2146,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2158,15 +2157,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2181,13 +2180,13 @@ Route::get('/debug-reservas', function() {
     try {
         $userId = Auth::id();
         $user = Auth::user();
-        
+
         $todasLasReservas = \App\Models\Reserva::with('usuario')->get();
         $reservasDelUsuario = \App\Models\Reserva::where('usuario_id', $userId)->get();
         $reservasSinCarrito = \App\Models\Reserva::where('usuario_id', $userId)
             ->where('estado', '!=', 'en_carrito')
             ->get();
-        
+
         return response()->json([
             'debug_info' => [
                 'user_id' => $userId,
@@ -2258,7 +2257,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2276,7 +2275,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2287,15 +2286,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2319,7 +2318,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2337,7 +2336,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2348,15 +2347,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2383,7 +2382,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2401,7 +2400,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2412,15 +2411,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2444,7 +2443,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2462,7 +2461,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2473,15 +2472,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2513,7 +2512,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2531,7 +2530,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2542,15 +2541,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2569,7 +2568,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2587,7 +2586,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2598,15 +2597,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2657,7 +2656,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2675,7 +2674,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2686,15 +2685,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2738,7 +2737,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2756,7 +2755,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2767,15 +2766,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2792,7 +2791,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2810,7 +2809,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2821,15 +2820,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2850,7 +2849,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2868,7 +2867,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2879,15 +2878,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2903,7 +2902,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2921,7 +2920,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2932,15 +2931,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -2965,7 +2964,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -2983,7 +2982,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -2994,15 +2993,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
@@ -3029,7 +3028,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if (!$emprendedor) {
             return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
         }
-        
+
         // Actualizar solo campos básicos
         $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
         $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
@@ -3047,7 +3046,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
         $emprendedor->estado = $request->input('estado', $emprendedor->estado);
         $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-        
+
         // Procesar arrays JSON
         if ($request->has('metodos_pago')) {
             $emprendedor->metodos_pago = $request->input('metodos_pago');
@@ -3058,15 +3057,15 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         if ($request->has('certificaciones')) {
             $emprendedor->certificaciones = $request->input('certificaciones');
         }
-        
+
         $emprendedor->save();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Emprendedor actualizado exitosamente',
             'data' => $emprendedor->fresh()
         ]);
-        
+
     } catch (\Exception $e) {
         return response()->json([
             'success' => false,
