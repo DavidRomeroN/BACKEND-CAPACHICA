@@ -81,59 +81,6 @@ Route::prefix('municipalidad')->group(function () {
     Route::get('/{id}/asociaciones/emprendedores', [MunicipalidadController::class, 'getWithAsociacionesAndEmprendedores']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
-
 // Sliders
 Route::prefix('sliders')->group(function () {
     Route::get('/', [SliderController::class, 'index']);
@@ -144,58 +91,6 @@ Route::prefix('sliders')->group(function () {
     Route::get('/{id}/image', [SliderController::class, 'getImage']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Asociaciones
 Route::prefix('asociaciones')->group(function () {
@@ -206,58 +101,6 @@ Route::prefix('asociaciones')->group(function () {
     Route::get('/ubicacion/buscar', [AsociacionController::class, 'getByUbicacion']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Emprendedores (rutas públicas)
 Route::prefix('emprendedores')->group(function () {
@@ -293,58 +136,6 @@ Route::prefix('emprendimientos')->group(function () {
     // Rutas protegidas se agregarán en la sección de middleware auth
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Servicios
 Route::prefix('servicios')->group(function () {
@@ -356,58 +147,6 @@ Route::prefix('servicios')->group(function () {
     Route::get('/{id}', [ServicioController::class, 'show']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Categorías
 Route::prefix('categorias')->group(function () {
@@ -415,58 +154,6 @@ Route::prefix('categorias')->group(function () {
     Route::get('/{id}', [CategoriaController::class, 'show']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Búsqueda de usuarios (pública)
 Route::get('/users/search', [UserController::class, 'search']);
@@ -480,60 +167,10 @@ Route::prefix('emprendedores')->group(function () {
             'message' => 'Ruta pública funcionando',
             'data' => $request->all()
         ]);
+        });
+
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ✅ NUEVA: Ruta completamente simple para testing
     Route::post('/test-simple', function(Request $request) {
@@ -617,58 +254,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         }
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ✅ RUTA TEMPORAL PARA PROBAR UPDATE SIN MIDDLEWARE
     Route::put('/test-update/{id}', function(Request $request, $id) {
@@ -778,111 +363,7 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         }
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
 
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
-
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Eventos
 Route::prefix('eventos')->group(function () {
@@ -896,58 +377,6 @@ Route::prefix('eventos')->group(function () {
     Route::post('/', [EventController::class, 'store']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // Planes (rutas públicas)
 Route::prefix('planes')->group(function () {
@@ -960,58 +389,6 @@ Route::prefix('planes')->group(function () {
     Route::get('/{id}/emprendedores', [PlanEmprendedoresController::class, 'index']);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // ===== RUTAS PÚBLICAS ESPECÍFICAS PARA CATÁLOGO =====
 Route::prefix('public')->group(function () {
@@ -1031,60 +408,10 @@ Route::prefix('public')->group(function () {
             'success' => true,
             'data' => $planes
         ]);
+        });
+
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     Route::get('/planes/{id}', function($id) {
         $plan = \App\Models\Plan::with([
@@ -1110,58 +437,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         ]);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ACTUALIZADO: Incluir planes donde el emprendedor participa (no solo organiza)
     Route::get('/emprendedores/{emprendedorId}/planes', function($emprendedorId) {
@@ -1188,58 +463,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             }
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
         return response()->json([
             'success' => true,
@@ -1247,112 +470,8 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         ]);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // ===== RUTAS PROTEGIDAS =====
 Route::middleware('auth:sanctum')->group(function () {
@@ -1372,58 +491,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\API\Emprendedores\EmprendedorDashboardController::class, 'dashboard']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Mis Emprendimientos (para usuarios emprendedores)
     Route::prefix('mis-emprendimientos')->group(function () {
@@ -1443,58 +510,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}/administradores/{userId}', [MisEmprendimientosController::class, 'eliminarAdministrador']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Municipalidades (rutas protegidas)
     Route::prefix('municipalidad')->group(function () {
@@ -1503,58 +518,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [MunicipalidadController::class, 'destroy'])->middleware('permission:municipalidad_update');
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Sliders (rutas protegidas)
     Route::prefix('sliders')->group(function () {
@@ -1564,58 +527,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [SliderController::class, 'destroy']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Asociaciones (rutas protegidas)
     Route::prefix('asociaciones')->group(function () {
@@ -1630,58 +541,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             ->middleware('permission:asociacion_read');
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Emprendedores (rutas protegidas)
     Route::prefix('emprendedores')->group(function () {
@@ -1748,115 +607,11 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
                         [EmprendedorPlanesController::class, 'cancelarInscripcion']);
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
         // Resumen de todos los planes del emprendedor
         Route::get('/{emprendedorId}/planes-resumen', [EmprendedorPlanesController::class, 'resumen']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Servicios (rutas protegidas)
     Route::prefix('servicios')->group(function () {
@@ -1865,58 +620,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [ServicioController::class, 'destroy']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Categorías (rutas protegidas)
     Route::prefix('categorias')->group(function () {
@@ -1925,58 +628,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [CategoriaController::class, 'destroy']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ===== PLANES (rutas protegidas) =====
     Route::prefix('planes')->group(function () {
@@ -1997,112 +648,8 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             Route::get('/disponibles', [PlanEmprendedoresController::class, 'emprendedoresDisponibles']); // Emprendedores disponibles para agregar
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ===== INSCRIPCIONES A PLANES =====
     Route::prefix('inscripciones')->group(function () {
@@ -2121,112 +668,59 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [PlanInscripcionController::class, 'destroy']); // Eliminar inscripción
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ===== RESERVAS =====
     // ✅ ENDPOINT DE DEBUG TEMPORAL PARA RESERVAS
-Route::get('/debug-reservas', function() {
-    try {
-        $userId = Auth::id();
-        $user = Auth::user();
+    Route::get('/debug-reservas', function() {
+        try {
+            $userId = Auth::id();
+            $user = Auth::user();
 
-        $todasLasReservas = \App\Models\Reserva::with('usuario')->get();
-        $reservasDelUsuario = \App\Models\Reserva::where('usuario_id', $userId)->get();
-        $reservasSinCarrito = \App\Models\Reserva::where('usuario_id', $userId)
-            ->where('estado', '!=', 'en_carrito')
-            ->get();
+            $todasLasReservas = \App\Models\Reserva::with('usuario')->get();
+            $reservasDelUsuario = \App\Models\Reserva::where('usuario_id', $userId)->get();
+            $reservasSinCarrito = \App\Models\Reserva::where('usuario_id', $userId)
+                ->where('estado', '!=', 'en_carrito')
+                ->get();
 
-        return response()->json([
-            'debug_info' => [
-                'user_id' => $userId,
-                'user_name' => $user ? $user->name : 'No autenticado',
-                'user_email' => $user ? $user->email : 'No autenticado',
-                'total_reservas_sistema' => $todasLasReservas->count(),
-                'reservas_del_usuario_total' => $reservasDelUsuario->count(),
-                'reservas_del_usuario_sin_carrito' => $reservasSinCarrito->count(),
-            ],
-            'todas_las_reservas' => $todasLasReservas->map(function($r) {
-                return [
-                    'id' => $r->id,
-                    'usuario_id' => $r->usuario_id,
-                    'usuario_name' => $r->usuario ? $r->usuario->name : 'N/A',
-                    'codigo_reserva' => $r->codigo_reserva,
-                    'estado' => $r->estado,
-                    'created_at' => $r->created_at
-                ];
-            }),
-            'reservas_del_usuario' => $reservasDelUsuario->map(function($r) {
-                return [
-                    'id' => $r->id,
-                    'codigo_reserva' => $r->codigo_reserva,
-                    'estado' => $r->estado,
-                    'created_at' => $r->created_at
-                ];
-            })
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'debug_info' => [
-                'user_id' => Auth::id(),
-                'user_name' => Auth::user() ? Auth::user()->name : 'No autenticado',
-            ]
-        ], 500);
-    }
-});
-
-Route::prefix('reservas')->group(function () {
+            return response()->json([
+                'debug_info' => [
+                    'user_id' => $userId,
+                    'user_name' => $user ? $user->name : 'No autenticado',
+                    'user_email' => $user ? $user->email : 'No autenticado',
+                    'total_reservas_sistema' => $todasLasReservas->count(),
+                    'reservas_del_usuario_total' => $reservasDelUsuario->count(),
+                    'reservas_del_usuario_sin_carrito' => $reservasSinCarrito->count(),
+                ],
+                'todas_las_reservas' => $todasLasReservas->map(function($r) {
+                    return [
+                        'id' => $r->id,
+                        'usuario_id' => $r->usuario_id,
+                        'usuario_name' => $r->usuario ? $r->usuario->name : 'N/A',
+                        'codigo_reserva' => $r->codigo_reserva,
+                        'estado' => $r->estado,
+                        'created_at' => $r->created_at
+                    ];
+                }),
+                'reservas_del_usuario' => $reservasDelUsuario->map(function($r) {
+                    return [
+                        'id' => $r->id,
+                        'codigo_reserva' => $r->codigo_reserva,
+                        'estado' => $r->estado,
+                        'created_at' => $r->created_at
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'debug_info' => [
+                    'user_id' => Auth::id(),
+                    'user_name' => Auth::user() ? Auth::user()->name : 'No autenticado',
+                ]
+            ], 500);
+        }
+    });
+    Route::prefix('reservas')->group(function () {
         // Rutas específicas (deben ir primero)
         Route::get('carrito', [CarritoReservaController::class, 'obtenerCarrito']);
         Route::post('carrito/agregar', [CarritoReservaController::class, 'agregarAlCarrito']);
@@ -2250,58 +744,6 @@ Route::prefix('reservas')->group(function () {
         Route::put('{id}/estado', [ReservaController::class, 'cambiarEstado']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Reserva Servicios
     Route::prefix('reserva-servicios')->group(function () {
@@ -2311,58 +753,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::get('/verificar-disponibilidad', [ReservaServicioController::class, 'verificarDisponibilidad']);
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ===== RUTAS DE ADMINISTRACIÓN (CON PERMISOS) =====
 
@@ -2375,58 +765,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::delete('/{id}', [RoleController::class, 'destroy'])->middleware('permission:role_delete');
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Permisos
     Route::get('/users/{id}/permissions', [PermissionController::class, 'getUserPermissions']);
@@ -2436,58 +774,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::post('/assign-to-role', [PermissionController::class, 'assignPermissionsToRole'])->middleware('permission:permission_assign');
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Gestión de Usuarios
     Route::prefix('users')->middleware('can:user_read')->group(function () {
@@ -2505,114 +791,10 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             Route::delete('/{id}/profile-photo', [UserController::class, 'deleteProfilePhoto']);
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
         Route::delete('/{id}', [UserController::class, 'destroy'])->middleware('can:user_delete');
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // ===== ADMINISTRACIÓN DE PLANES (ACTUALIZADO) =====
     Route::prefix('admin/planes')->middleware('permission:user_read')->group(function () {
@@ -2649,58 +831,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             ]);
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
         // Gestión avanzada de inscripciones para administradores
         Route::get('/inscripciones/todas', function(Request $request) {
@@ -2730,223 +860,16 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
             ]);
         });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
     });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
     // Dashboard
     Route::prefix('dashboard')->middleware('permission:user_read')->group(function () {
         Route::get('/summary', [DashboardController::class, 'summary']);
     });
-
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
+// ===== RUTAS PÚBLICAS FINALES =====
 
 // Status endpoint
 Route::get('/status', function () {
@@ -2957,58 +880,6 @@ Route::get('/status', function () {
     ]);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
 // ✅ ENDPOINT DE PRUEBA PARA DEBUGGING
 Route::get('/test-debug', function () {
@@ -3021,56 +892,4 @@ Route::get('/test-debug', function () {
     ]);
 });
 
-// ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
-Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
-    try {
-        $emprendedor = \App\Models\Emprendedor::find($id);
-        if (!$emprendedor) {
-            return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
-        }
-
-        // Actualizar solo campos básicos
-        $emprendedor->nombre = $request->input('nombre', $emprendedor->nombre);
-        $emprendedor->descripcion = $request->input('descripcion', $emprendedor->descripcion);
-        $emprendedor->opciones_acceso = $request->input('opciones_acceso', $emprendedor->opciones_acceso);
-        $emprendedor->categoria = $request->input('categoria', $emprendedor->categoria);
-        $emprendedor->tipo_servicio = $request->input('tipo_servicio', $emprendedor->tipo_servicio);
-        $emprendedor->ubicacion = $request->input('ubicacion', $emprendedor->ubicacion);
-        $emprendedor->telefono = $request->input('telefono', $emprendedor->telefono);
-        $emprendedor->email = $request->input('email', $emprendedor->email);
-        $emprendedor->pagina_web = $request->input('pagina_web', $emprendedor->pagina_web);
-        $emprendedor->horario_atencion = $request->input('horario_atencion', $emprendedor->horario_atencion);
-        $emprendedor->precio_rango = $request->input('precio_rango', $emprendedor->precio_rango);
-        $emprendedor->capacidad_aforo = $request->input('capacidad_aforo', $emprendedor->capacidad_aforo);
-        $emprendedor->numero_personas_atiende = $request->input('numero_personas_atiende', $emprendedor->numero_personas_atiende);
-        $emprendedor->facilidades_discapacidad = $request->input('facilidades_discapacidad', $emprendedor->facilidades_discapacidad);
-        $emprendedor->estado = $request->input('estado', $emprendedor->estado);
-        $emprendedor->asociacion_id = $request->input('asociacion_id', $emprendedor->asociacion_id);
-
-        // Procesar arrays JSON
-        if ($request->has('metodos_pago')) {
-            $emprendedor->metodos_pago = $request->input('metodos_pago');
-        }
-        if ($request->has('idiomas_hablados')) {
-            $emprendedor->idiomas_hablados = $request->input('idiomas_hablados');
-        }
-        if ($request->has('certificaciones')) {
-            $emprendedor->certificaciones = $request->input('certificaciones');
-        }
-
-        $emprendedor->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Emprendedor actualizado exitosamente',
-            'data' => $emprendedor->fresh()
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error: ' . $e->getMessage()
-        ], 500);
-    }
-});
 
