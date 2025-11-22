@@ -32,8 +32,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # ===== CONFIGURACIÓN DE NGINX =====
-# Usaremos SOLO nginx.conf.template, Render lo procesará con envsubst
-COPY ./nginx.conf.template /etc/nginx/nginx.conf.template
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # ===== CONFIGURACIÓN DE SUPERVISORD =====
 COPY ./supervisord.conf /etc/supervisord.conf

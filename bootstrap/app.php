@@ -54,6 +54,14 @@ return Application::configure(basePath: dirname(__DIR__))
     
         // Usuario no tiene permiso o rol
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            // Log del error 403
+            \Log::warning('Acceso denegado (403)', [
+                'message' => $e->getMessage(),
+                'user_id' => \Auth::id(),
+                'request_url' => $request->fullUrl(),
+                'request_method' => $request->method(),
+            ]);
+            
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -75,6 +83,17 @@ return Application::configure(basePath: dirname(__DIR__))
         // Error interno (sólo muestra el mensaje si estás en debug)
         // ✅ MEJORADO: Ocultar detalles técnicos en producción
         $exceptions->render(function (\Throwable $e, $request) {
+            // Log del error antes de responder
+            \Log::error('Error no manejado: ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request_url' => $request->fullUrl(),
+                'request_method' => $request->method(),
+                'request_data' => $request->except(['password', 'password_confirmation']),
+            ]);
+            
             if ($request->expectsJson()) {
                 // En producción (APP_DEBUG=false), nunca exponer detalles técnicos
                 $isDebug = config('app.debug', false);
