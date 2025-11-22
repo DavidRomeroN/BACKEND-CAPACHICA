@@ -587,7 +587,6 @@ Route::middleware('auth:sanctum')->group(function () {
             $emprendedor->save();
             return response()->json(['success' => true, 'data' => $emprendedor]);
         });
-    });
 
         // Gestión de administradores de emprendimientos
         Route::post('/{id}/administradores', [EmprendedorController::class, 'agregarAdministrador']);
@@ -606,7 +605,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/{planId}/inscripciones/{inscripcionId}/cancelar',
                         [EmprendedorPlanesController::class, 'cancelarInscripcion']);
         });
-
 
         // Resumen de todos los planes del emprendedor
         Route::get('/{emprendedorId}/planes-resumen', [EmprendedorPlanesController::class, 'resumen']);
