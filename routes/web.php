@@ -12,7 +12,7 @@ Route::get('/', function () {
 // Ruta para servir archivos del storage (soporta subcarpetas)
 Route::get('/storage-files/{path}', [StorageController::class, 'serveFile'])
     ->where('path', '.*')
-    ->name('storage.local');
+    ->name('storage.files');
 
 // Proxy web para verificación de email (redirecciona a la ruta API firmada)
 Route::get('/verify-email', function (Request $request) {
