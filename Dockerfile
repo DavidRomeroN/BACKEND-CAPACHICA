@@ -31,30 +31,29 @@ COPY . .
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./supervisord.conf /etc/supervisord.conf
 
+# Copiar entrypoint
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Prepara .env
 RUN cp .env.example .env || true
 
 # Instala dependencias Laravel
 RUN composer install --optimize-autoloader --no-dev
 
-# ✅ SEGURIDAD: Migraciones removidas del Dockerfile
-# Las migraciones deben ejecutarse manualmente ANTES del deploy o en CI/CD
-# Ejecutarlas en el Dockerfile puede causar fallos si hay errores y dejar el sistema inoperativo
-# Claves y symlinks
+# Generar clave y storage link
 RUN php artisan key:generate \
  && php artisan storage:link
-# NOTA: Migraciones deben ejecutarse manualmente: php artisan migrate --force
-# NOTA: Seeds deben ejecutarse manualmente: php artisan db:seed --force
 
 # Permisos finales
 RUN chown -R www-data:www-data /var/www/html \
  && chmod -R 755 /var/www/html
 
-# Expone el puerto HTTP
+# Exponer el puerto HTTP
 EXPOSE 80
 
-# Asegura que corra como root (Render lo inicia así)
+# Usuario root (Render lo usa)
 USER root
 
-# Arranca supervisord
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# Usamos entrypoint personalizado
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

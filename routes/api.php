@@ -2895,7 +2895,6 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         ], 500);
     }
 });
-});
 
 // ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
 Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
