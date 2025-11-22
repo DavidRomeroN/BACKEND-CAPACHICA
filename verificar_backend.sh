@@ -65,3 +65,4 @@ echo "   3. Verifica que APP_DEBUG=false en producción"
 
 
 
+
