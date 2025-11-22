@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     && chown -R www-data:www-data /run/php /var/lib/nginx /run/nginx \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+
 COPY --from=composer:2.6 /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www/html
 
