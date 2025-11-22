@@ -15,3 +15,8 @@ php artisan view:cache || true
 
 echo " Iniciando supervisord..."
 exec /usr/bin/supervisord -c /etc/supervisord.conf
+
+echo "==> Rendering nginx.conf with PORT=$PORT"
+envsubst '${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+
+

@@ -1,54 +1,48 @@
-#!/usr/bin/env bash
-set -e
+FROM php:8.2-fpm
 
-echo "==> Entrypoint: starting..."
+RUN apt-get update && apt-get install -y \
+      mariadb-client \
+      default-libmysqlclient-dev \
+      libpq-dev \
+      libzip-dev \
+      libpng-dev \
+      libjpeg-dev \
+      libfreetype6-dev \
+      libonig-dev \
+      libxml2-dev \
+      nginx \
+      supervisor \
+      git \
+      unzip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip gd mbstring xml \
+    && mkdir -p /run/php /var/log/supervisor /var/lib/nginx/body /run/nginx \
+    && chown -R www-data:www-data /run/php /var/lib/nginx /run/nginx \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 0) Asegura permisos básicos (por si Render monta algo raro)
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache || true
 
-# 1) Limpia caches viejos (muy importante para que no use .env local cacheado)
-echo "==> Clearing caches..."
-php artisan config:clear || true
-php artisan cache:clear || true
-php artisan route:clear || true
-php artisan view:clear || true
+COPY --from=composer:2.6 /usr/bin/composer /usr/local/bin/composer
+WORKDIR /var/www/html
 
-# 2) Espera a Postgres (Free a veces tarda en responder)
-echo "==> Waiting for DB..."
-php -r '
-$tries=30;
-$url=getenv("DATABASE_URL");
-$host=getenv("DB_HOST");
-$port=getenv("DB_PORT") ?: 5432;
-$db=getenv("DB_DATABASE");
-$user=getenv("DB_USERNAME");
-$pass=getenv("DB_PASSWORD");
+COPY . .
+COPY ./nginx.conf.template /etc/nginx/nginx.conf.template
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-$dsn = $url ?: "pgsql:host=$host;port=$port;dbname=$db";
+COPY ./supervisord.conf /etc/supervisord.conf
 
-while($tries--){
-  try {
-    new PDO($dsn, $user, $pass);
-    echo "DB ready\n"; exit(0);
-  } catch(Exception $e){
-    echo "DB not ready, retrying...\n";
-    sleep(2);
-  }
-}
-echo "DB never became ready\n"; exit(1);
-'
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# 3) Corre migraciones en producción
-echo "==> Running migrations..."
-php artisan migrate --force
+RUN cp .env.example .env || true
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
-# 4) Cachea config/rutas/vistas ya con envs correctas
-echo "==> Caching config/routes/views..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
 
-# 5) Levanta supervisor (php-fpm + nginx)
-echo "==> Starting supervisord..."
-exec /usr/bin/supervisord -c /etc/supervisord.conf
+RUN php artisan storage:link || true
+
+RUN chown -R www-data:www-data /var/www/html \
+ && chmod -R 755 /var/www/html
+
+EXPOSE 80
+USER root
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
