@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
+echo " Ejecutando package:discover..."
+php artisan package:discover --ansi || true
+
+
 echo " Ejecutando migraciones..."
 php artisan migrate --force || true
 

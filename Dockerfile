@@ -32,7 +32,8 @@ COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN cp .env.example .env || true
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
+
 
 RUN php artisan storage:link || true
 
