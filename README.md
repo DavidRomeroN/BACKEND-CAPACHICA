@@ -7,6 +7,64 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+# Capachica Turismo - Backend API
+
+Backend API desarrollado con Laravel para la aplicación móvil de turismo en Capachica.
+
+## 🚀 Inicio Rápido
+
+Para configurar el proyecto después de clonarlo, sigue la guía en **[SETUP.md](./SETUP.md)**
+
+### Configuración Rápida
+
+1. **Instalar dependencias**:
+   ```bash
+   composer install
+   ```
+
+2. **Configurar `.env`**:
+   - Copia `.env.example` a `.env` (o créalo manualmente)
+   - Configura la base de datos y el correo electrónico
+
+3. **Generar clave de aplicación**:
+   ```bash
+   php artisan key:generate
+   ```
+
+4. **Ejecutar migraciones**:
+   ```bash
+   php artisan migrate
+   ```
+
+5. **Configurar correo** (⚠️ IMPORTANTE):
+   - Lee **[CONFIGURACION_EMAIL.md](./CONFIGURACION_EMAIL.md)** para configurar el envío de correos
+   - Sin esto, los correos de verificación NO se enviarán
+
+6. **Iniciar servidor**:
+   ```bash
+   php artisan serve --host=0.0.0.0 --port=8000
+   ```
+
+## 📚 Documentación
+
+- **[INSTRUCCIONES_RAPIDAS.md](./INSTRUCCIONES_RAPIDAS.md)** - ⚡ Solución rápida para correos que no llegan (5 minutos)
+- **[SETUP.md](./SETUP.md)** - Guía completa de configuración inicial
+- **[CONFIGURACION_EMAIL.md](./CONFIGURACION_EMAIL.md)** - Configuración detallada de correo electrónico
+
+## ⚠️ Problema Común: Correos No Llegan
+
+**Si los correos de verificación NO llegan después de clonar el proyecto**, es porque:
+
+1. **El archivo `.env` NO está en GitHub** (por seguridad)
+2. **Cada desarrollador debe crear su propio `.env`** con sus credenciales de correo
+3. **Por defecto, Laravel usa `MAIL_MAILER=log`**, que solo guarda correos en logs, NO los envía
+
+**Solución rápida**: Lee **[INSTRUCCIONES_RAPIDAS.md](./INSTRUCCIONES_RAPIDAS.md)** (5 minutos)
+
+**Solución detallada**: Lee **[CONFIGURACION_EMAIL.md](./CONFIGURACION_EMAIL.md)** para configurar Mailtrap (desarrollo) o Gmail (producción).
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

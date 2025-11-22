@@ -3,6 +3,8 @@ FROM php:8.2-fpm
 
 # Instalar dependencias del sistema + crear dirs necesarios
 RUN apt-get update && apt-get install -y \
+      default-mysql-client \
+      libmysqlclient-dev \
       libpq-dev \
       libzip-dev \
       libpng-dev \
@@ -14,7 +16,7 @@ RUN apt-get update && apt-get install -y \
       supervisor \
       git \
       unzip \
-    && docker-php-ext-install pdo pdo_pgsql zip gd mbstring xml \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip gd mbstring xml \
     && mkdir -p /run/php /var/log/supervisor /var/lib/nginx/body /run/nginx \
     && chown -R www-data:www-data /run/php /var/lib/nginx /run/nginx
 

@@ -11,4 +11,20 @@ services:
         value: false
       - key: APP_URL
         value: https://capachica-turismo-backend.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: media
     startCommand: ""
+    
+  - type: pspg
+    name: capachica-turismo-db
+    plan: free
+    databaseName: capachica_turismo
+    user: capachica_user

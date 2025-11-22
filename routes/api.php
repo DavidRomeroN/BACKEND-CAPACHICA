@@ -272,6 +272,27 @@ Route::prefix('emprendedores')->group(function () {
     
 });
 
+// ✅ COMPATIBILIDAD: Rutas alias para frontend web (usa /emprendimientos)
+// Estas rutas apuntan a los mismos controladores que /emprendedores
+Route::prefix('emprendimientos')->group(function () {
+    Route::get('/', [EmprendedorController::class, 'index']);
+    Route::get('/{id}', [EmprendedorController::class, 'show']);
+    Route::get('/{id}/servicios', [EmprendedorController::class, 'getServicios']);
+    Route::get('/{id}/reservas', function($id) {
+        // Redirigir a la ruta protegida si existe, o crear método público
+        return app(EmprendedorController::class)->getReservas(request(), $id);
+    });
+    Route::get('/{id}/estadisticas', function($id) {
+        // Si existe método de estadísticas, usarlo
+        $controller = app(EmprendedorController::class);
+        if (method_exists($controller, 'getEstadisticas')) {
+            return $controller->getEstadisticas(request(), $id);
+        }
+        return response()->json(['message' => 'Endpoint no disponible'], 404);
+    });
+    // Rutas protegidas se agregarán en la sección de middleware auth
+});
+
 // ✅ ENDPOINT DE PRUEBA SIMPLE PARA PRODUCCIÓN
 Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
     try {
@@ -1670,6 +1691,45 @@ Route::put('/emprendedor-simple-update/{id}', function(Request $request, $id) {
         Route::post('/{id}', [EmprendedorController::class, 'update'])->middleware('permission:emprendedor_update'); // ✅ POST para archivos
         Route::delete('/{id}', [EmprendedorController::class, 'destroy']);
         Route::get('/{id}/reservas', [EmprendedorController::class, 'getReservas']);
+        
+        // ✅ COMPATIBILIDAD: Rutas alias para frontend web
+        Route::post('/{id}/toggle-estado', function($id) {
+            $controller = app(EmprendedorController::class);
+            if (method_exists($controller, 'toggleEstado')) {
+                return $controller->toggleEstado(request(), $id);
+            }
+            // Si no existe, crear lógica simple
+            $emprendedor = \App\Models\Emprendedor::find($id);
+            if (!$emprendedor) {
+                return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
+            }
+            $emprendedor->estado = !$emprendedor->estado;
+            $emprendedor->save();
+            return response()->json(['success' => true, 'data' => $emprendedor]);
+        });
+    });
+    
+    // ✅ COMPATIBILIDAD: Rutas protegidas alias para /emprendimientos
+    Route::prefix('emprendimientos')->group(function () {
+        Route::post('/', [EmprendedorController::class, 'store'])->middleware('permission:emprendedor_create');
+        Route::put('/{id}', [EmprendedorController::class, 'update']);
+        Route::post('/{id}', [EmprendedorController::class, 'update'])->middleware('permission:emprendedor_update');
+        Route::delete('/{id}', [EmprendedorController::class, 'destroy']);
+        Route::get('/{id}/reservas', [EmprendedorController::class, 'getReservas']);
+        Route::post('/{id}/toggle-estado', function($id) {
+            $controller = app(EmprendedorController::class);
+            if (method_exists($controller, 'toggleEstado')) {
+                return $controller->toggleEstado(request(), $id);
+            }
+            $emprendedor = \App\Models\Emprendedor::find($id);
+            if (!$emprendedor) {
+                return response()->json(['success' => false, 'message' => 'Emprendedor no encontrado'], 404);
+            }
+            $emprendedor->estado = !$emprendedor->estado;
+            $emprendedor->save();
+            return response()->json(['success' => true, 'data' => $emprendedor]);
+        });
+    });
 
         // Gestión de administradores de emprendimientos
         Route::post('/{id}/administradores', [EmprendedorController::class, 'agregarAdministrador']);
