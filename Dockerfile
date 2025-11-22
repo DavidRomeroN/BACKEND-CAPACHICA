@@ -42,8 +42,8 @@ RUN cp .env.example .env || true
 RUN composer install --optimize-autoloader --no-dev
 
 # Generar clave y storage link
-RUN php artisan key:generate \
- && php artisan storage:link
+RUN php artisan storage:link || true
+
 
 # Permisos finales
 RUN chown -R www-data:www-data /var/www/html \
