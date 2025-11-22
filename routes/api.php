@@ -22,6 +22,8 @@ use App\Http\Controllers\API\Planes\PlanInscripcionController;
 use App\Http\Controllers\API\Planes\PlanEmprendedoresController; // NUEVO
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\API\Reservas\CarritoReservaController;
+use Illuminate\Support\Facades\Auth;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -161,15 +163,16 @@ Route::get('/users/search', [UserController::class, 'search']);
 // ✅ TEMPORAL: Rutas de prueba completamente públicas
 Route::prefix('emprendedores')->group(function () {
     Route::post('/test', [EmprendedorController::class, 'store']); // ✅ Sin middleware de permisos
-    Route::post('/test-public', function(Request $request) {
+
+    Route::post('/test-public', function (Request $request) {
         return response()->json([
             'success' => true,
             'message' => 'Ruta pública funcionando',
             'data' => $request->all()
         ]);
-        });
-
     });
+});
+
 
 
     // ✅ NUEVA: Ruta completamente simple para testing
@@ -392,25 +395,84 @@ Route::prefix('planes')->group(function () {
 
 // ===== RUTAS PÚBLICAS ESPECÍFICAS PARA CATÁLOGO =====
 Route::prefix('public')->group(function () {
+
     // Planes públicos para mostrar en landing page o catálogo público
-    Route::get('/planes', function(Request $request) {
+    Route::get('/planes', function (Request $request) {
         $planes = \App\Models\Plan::with([
-                'emprendedor:id,nombre,ubicacion', // Legacy
-                'emprendedores:id,nombre,ubicacion' // Nuevo - múltiples emprendedores
+                'emprendedor:id,nombre,ubicacion',
+                'emprendedores:id,nombre,ubicacion'
             ])
             ->publicos()
             ->activos()
             ->conCuposDisponibles()
-            ->select('id', 'nombre', 'descripcion', 'duracion_dias', 'precio_total', 'imagen_principal', 'emprendedor_id', 'dificultad')
+            ->select(
+                'id','nombre','descripcion','duracion_dias',
+                'precio_total','imagen_principal','emprendedor_id',
+                'dificultad'
+            )
             ->paginate(12);
 
         return response()->json([
             'success' => true,
             'data' => $planes
         ]);
+    });
+
+    Route::get('/planes/{id}', function ($id) {
+        $plan = \App\Models\Plan::with([
+            'emprendedor:id,nombre,ubicacion,telefono,email',
+            'emprendedores:id,nombre,ubicacion,telefono,email',
+            'organizadorPrincipal:id,nombre,ubicacion,telefono,email',
+            'dias.servicios:id,nombre,descripcion,precio'
+        ])
+        ->publicos()
+        ->activos()
+        ->find($id);
+
+        if (!$plan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Plan no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $plan
+        ]);
+    });
+
+    Route::get('/emprendedores/{emprendedorId}/planes', function ($emprendedorId) {
+        $planes = \App\Models\Plan::with([
+                'emprendedores' => function($query) use ($emprendedorId) {
+                    $query->where('emprendedores.id', $emprendedorId);
+                }
+            ])
+            ->whereHas('emprendedores', function($query) use ($emprendedorId) {
+                $query->where('emprendedores.id', $emprendedorId);
+            })
+            ->publicos()
+            ->activos()
+            ->conCuposDisponibles()
+            ->select('id','nombre','descripcion','duracion_dias','precio_total','imagen_principal','dificultad')
+            ->get();
+
+        $planes->each(function($plan) use ($emprendedorId) {
+            $emprendedor = $plan->emprendedores->first();
+            if ($emprendedor) {
+                $plan->mi_rol = $emprendedor->pivot->rol;
+                $plan->soy_organizador_principal = $emprendedor->pivot->es_organizador_principal;
+            }
         });
 
+        return response()->json([
+            'success' => true,
+            'data' => $planes
+        ]);
     });
+
+});
+
 
 
     Route::get('/planes/{id}', function($id) {
@@ -889,5 +951,6 @@ Route::get('/test-debug', function () {
         'storage_exists' => \Storage::disk('public')->exists('.'),
     ]);
 });
+
 
 
