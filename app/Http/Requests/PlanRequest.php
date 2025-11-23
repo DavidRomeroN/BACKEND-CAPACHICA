@@ -17,13 +17,33 @@ class PlanRequest extends FormRequest
     {
         $user = Auth::user();
         
+        // Log para debugging
+        if (!$user) {
+            \Log::warning('PlanRequest::authorize() - Usuario no autenticado', [
+                'method' => $this->method(),
+                'url' => $this->fullUrl(),
+            ]);
+            return false;
+        }
+        
         // Para crear un nuevo plan
         if ($this->isMethod('POST')) {
-            return $user && (
-                $user->hasPermissionTo('plan_create') || 
-                $user->hasRole('admin') ||
-                $user->emprendimientos()->exists()
-            );
+            $hasPermission = $user->hasPermissionTo('plan_create');
+            $hasAdminRole = $user->hasRole('admin');
+            $hasEmprendimientos = $user->emprendimientos()->exists();
+            $authorized = $hasPermission || $hasAdminRole || $hasEmprendimientos;
+            
+            if (!$authorized) {
+                \Log::warning('PlanRequest::authorize() - POST denegado', [
+                    'user_id' => $user->id,
+                    'has_permission_plan_create' => $hasPermission,
+                    'has_admin_role' => $hasAdminRole,
+                    'has_emprendimientos' => $hasEmprendimientos,
+                    'url' => $this->fullUrl(),
+                ]);
+            }
+            
+            return $authorized;
         }
         
         // Para actualizar un plan existente

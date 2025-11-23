@@ -33,6 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // No autenticado (token inválido o no enviado)
         $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            // Log del error 401
+            \Log::warning('No autenticado (401)', [
+                'message' => $e->getMessage(),
+                'request_url' => $request->fullUrl(),
+                'request_method' => $request->method(),
+                'authorization_header' => $request->header('Authorization') ? 'present' : 'missing',
+            ]);
+            
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -40,9 +48,61 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 401);
             }
         });
+        
+        // No autorizado (authorize() retornó false en FormRequest)
+        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException $e, $request) {
+            // Log detallado del error 403 de autorización
+            \Log::warning('No autorizado (403) - authorize() falló', [
+                'message' => $e->getMessage(),
+                'user_id' => \Auth::id(),
+                'user_authenticated' => \Auth::check(),
+                'request_url' => $request->fullUrl(),
+                'request_method' => $request->method(),
+                'route_name' => $request->route()?->getName(),
+                'route_action' => $request->route()?->getActionName(),
+                'request_data' => $request->except(['password', 'password_confirmation', 'current_password']),
+                'headers' => [
+                    'content-type' => $request->header('Content-Type'),
+                    'accept' => $request->header('Accept'),
+                    'authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                ],
+            ]);
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No tienes autorización para realizar esta acción.',
+                ], 403);
+            }
+        });
     
         // Error de validación
         $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
+            // Log de errores de validación (a archivo)
+            \Log::warning('Error de validación (422)', [
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
+                'errors' => $e->errors(),
+                'user_id' => \Auth::id(),
+                'request_data' => $request->except(['password', 'password_confirmation', 'current_password']),
+                'headers' => [
+                    'content-type' => $request->header('Content-Type'),
+                    'accept' => $request->header('Accept'),
+                    'authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                ],
+            ]);
+            
+            // ✅ NUEVO: También escribir a stderr para que aparezca en logs de Render/Docker
+            $logMessage = sprintf(
+                "[VALIDATION ERROR 422] %s %s - Errors: %s - User: %s - Data: %s",
+                $request->method(),
+                $request->fullUrl(),
+                json_encode($e->errors()),
+                \Auth::id() ?? 'guest',
+                json_encode($request->except(['password', 'password_confirmation', 'current_password']))
+            );
+            error_log($logMessage);
+            
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -52,14 +112,21 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
     
-        // Usuario no tiene permiso o rol
+        // Usuario no tiene permiso o rol (Spatie Permission)
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
-            // Log del error 403
-            \Log::warning('Acceso denegado (403)', [
+            // Log detallado del error 403 de permisos
+            \Log::warning('Acceso denegado (403) - Sin permisos/rol', [
                 'message' => $e->getMessage(),
                 'user_id' => \Auth::id(),
+                'user_authenticated' => \Auth::check(),
+                'user_roles' => \Auth::check() ? \Auth::user()->roles->pluck('name')->toArray() : [],
+                'user_permissions' => \Auth::check() ? \Auth::user()->getAllPermissions()->pluck('name')->toArray() : [],
                 'request_url' => $request->fullUrl(),
                 'request_method' => $request->method(),
+                'route_name' => $request->route()?->getName(),
+                'headers' => [
+                    'authorization' => $request->header('Authorization') ? 'present' : 'missing',
+                ],
             ]);
             
             if ($request->expectsJson()) {

@@ -58,3 +58,4 @@ EXPOSE 80
 USER root
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
