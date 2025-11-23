@@ -7,6 +7,21 @@ php artisan package:discover --ansi || true
 echo " Ejecutando migraciones..."
 php artisan migrate --force || echo "⚠️  Error en migraciones (continuando...)"
 
+# ✅ Asegurar que los roles básicos existan (crítico para el funcionamiento)
+echo "🔐 Verificando roles básicos..."
+php artisan tinker --execute="
+use Spatie\Permission\Models\Role;
+try {
+    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'emprendedor', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'moderador', 'guard_name' => 'web']);
+    echo '✅ Roles verificados/creados correctamente';
+} catch (\Exception \$e) {
+    echo '⚠️  Error verificando roles: ' . \$e->getMessage();
+}
+" || echo "⚠️  Error verificando roles (continuando...)"
+
 echo "⚡ Optimizando configuración..."
 php artisan config:cache || echo "⚠️  Error en config:cache (continuando...)"
 php artisan route:cache || echo "⚠️  Error en route:cache (continuando...)"

@@ -137,8 +137,16 @@ class UserController extends Controller
         if ($request->has('roles')) {
             $user->syncRoles($request->roles);
         } else {
-            // Assign default user role if no roles specified
-            $user->assignRole('user');
+            // Assign default user role if no roles specified (crear si no existe)
+            try {
+                $user->assignRole('user');
+            } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+                // Si el rol no existe, crearlo y luego asignarlo
+                Role::firstOrCreate(
+                    ['name' => 'user', 'guard_name' => 'web']
+                );
+                $user->assignRole('user');
+            }
         }
 
         return response()->json([

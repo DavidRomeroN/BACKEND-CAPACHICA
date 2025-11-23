@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Permission\Models\Role;
 
 class AuthService
 {
@@ -48,8 +49,16 @@ class AuthService
 
         $user = User::create($userData);
         
-        // Assign default user role
-        $user->assignRole('user');
+        // Assign default user role (crear si no existe)
+        try {
+            $user->assignRole('user');
+        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+            // Si el rol no existe, crearlo y luego asignarlo
+            Role::firstOrCreate(
+                ['name' => 'user', 'guard_name' => 'web']
+            );
+            $user->assignRole('user');
+        }
         
         // Dispatch registered event to trigger verification email
         event(new Registered($user));
@@ -157,8 +166,16 @@ class AuthService
                     'last_login' => now(),
                 ]);
                 
-                // Assign user role
-                $user->assignRole('user');
+                // Assign user role (crear si no existe)
+                try {
+                    $user->assignRole('user');
+                } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
+                    // Si el rol no existe, crearlo y luego asignarlo
+                    Role::firstOrCreate(
+                        ['name' => 'user', 'guard_name' => 'web']
+                    );
+                    $user->assignRole('user');
+                }
             } 
             // If the user exists but doesn't have google_id, update it
             else if (!$user->google_id) {
