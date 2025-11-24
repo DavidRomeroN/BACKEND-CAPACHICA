@@ -34,6 +34,28 @@ try {
 " || echo "⚠️  Error limpiando cache de permisos (continuando...)"
 php artisan cache:clear || echo "⚠️  Error limpiando cache general (continuando...)"
 
+# 🔧 TEMPORAL: Re-asignar rol admin al usuario ID 7 usando métodos de Spatie
+echo "🔧 Re-asignando rol admin al usuario ID 7..."
+php artisan tinker --execute="
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+try {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    \$user = User::find(7);
+    if (\$user) {
+        // Remover todos los roles existentes
+        \$user->roles()->detach();
+        // Asignar el rol admin usando Spatie (esto es lo correcto)
+        \$user->assignRole('admin');
+        echo '✅ Rol admin re-asignado correctamente al usuario ID 7';
+    } else {
+        echo '⚠️  Usuario ID 7 no encontrado';
+    }
+} catch (\Exception \$e) {
+    echo '⚠️  Error re-asignando rol: ' . \$e->getMessage();
+}
+" || echo "⚠️  Error re-asignando rol (continuando...)"
+
 echo "⚡ Optimizando configuración..."
 php artisan config:cache || echo "⚠️  Error en config:cache (continuando...)"
 php artisan route:cache || echo "⚠️  Error en route:cache (continuando...)"
