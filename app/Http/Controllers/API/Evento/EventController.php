@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Evento;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\HandlesImages; // Importar el trait
 use App\Repository\EventoRepository;
+use App\Repository\SliderRepository; // ✅ AGREGADO
 use App\Http\Requests\EventoRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,10 +18,12 @@ class EventController extends Controller
     use HandlesImages; // Usar el trait para gestión de imágenes
 
     protected $eventoRepository;
+    protected $sliderRepository;
 
-    public function __construct(EventoRepository $eventoRepository)
+    public function __construct(EventoRepository $eventoRepository, SliderRepository $sliderRepository)
     {
         $this->eventoRepository = $eventoRepository;
+        $this->sliderRepository = $sliderRepository;
     }
 
     /**
@@ -203,7 +206,7 @@ class EventController extends Controller
             
             if ($request->hasFile('imagen')) {
                 Log::info('Processing imagen file...');
-                $evento = $this->eventoRepository->findById($id);
+                $evento = $this->eventoRepository->getById($id); // ✅ CORREGIDO: usar getById en lugar de findById
                 if ($evento && $evento->imagen) {
                     $this->deleteImage($evento->imagen); // Eliminar imagen anterior
                 }
@@ -216,7 +219,7 @@ class EventController extends Controller
 
             // ✅ NUEVO: Procesar galería de imágenes
             if ($request->hasFile('galeria')) {
-                $evento = $this->eventoRepository->findById($id);
+                $evento = $this->eventoRepository->getById($id); // ✅ CORREGIDO: usar getById en lugar de findById
                 // Eliminar imágenes anteriores de la galería
                 if ($evento && $evento->galeria && is_array($evento->galeria)) {
                     foreach ($evento->galeria as $oldImage) {
@@ -271,9 +274,12 @@ class EventController extends Controller
 
             // 2. Eliminar sliders
             if (!empty($deletedSlidersIds)) {
-                $slidersAEliminar = $this->eventoRepository->getSlidersByIds($deletedSlidersIds);
-                foreach ($slidersAEliminar as $slider) {
-                    $this->deleteImage($slider->url); // Eliminar el archivo físico
+                // ✅ CORREGIDO: Obtener sliders usando SliderRepository y eliminar imágenes físicas
+                foreach ($deletedSlidersIds as $sliderId) {
+                    $slider = $this->sliderRepository->findById($sliderId);
+                    if ($slider && $slider->url) {
+                        $this->deleteImage($slider->url); // Eliminar el archivo físico
+                    }
                 }
                 // La eliminación del registro de la DB la maneja el repositorio en el update
                 $validatedSinSliders['deleted_sliders'] = $deletedSlidersIds;
@@ -282,15 +288,34 @@ class EventController extends Controller
             // 3. Actualizar el evento
             $evento = $this->eventoRepository->update($id, $validatedSinSliders);
 
+            Log::info('=== EVENTO UPDATE SUCCESS ===', [
+                'id' => $id,
+                'imagen' => $validatedSinSliders['imagen'] ?? 'NO IMAGEN',
+                'galeria' => isset($validatedSinSliders['galeria']) ? count($validatedSinSliders['galeria']) : 'NO GALERIA',
+            ]);
+
             return response()->json([
                 'success' => true,
                 'data' => $evento->fresh(), // ✅ Asegurar que se carguen las relaciones actualizadas
                 'message' => 'Evento actualizado exitosamente'
             ]);
         } catch (\Exception $e) {
+            Log::error('=== EVENTO UPDATE ERROR ===', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el evento: ' . $e->getMessage()
+                'message' => config('app.debug') ? 'Error al actualizar el evento: ' . $e->getMessage() : 'Error interno del servidor',
+                'error' => config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ] : null
             ], 500);
         }
     }
