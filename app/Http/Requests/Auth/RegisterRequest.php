@@ -48,7 +48,7 @@ class RegisterRequest extends FormRequest
             'name.required' => 'El nombre de usuario es obligatorio',
             'email.required' => 'El correo electrónico es obligatorio',
             'email.email' => 'El formato del correo electrónico no es válido',
-            'email.unique' => 'Este correo electrónico ya está registrado',
+            'email.unique' => 'Este correo electrónico ya está registrado. ¿Ya tienes cuenta? Inicia sesión.',
             'password.required' => 'La contraseña es obligatoria',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres',
             'password.confirmed' => 'La confirmación de la contraseña no coincide',

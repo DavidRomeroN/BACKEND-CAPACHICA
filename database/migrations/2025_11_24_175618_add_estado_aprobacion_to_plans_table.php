@@ -15,7 +15,7 @@ return new class extends Migration
             // Verificar si la columna no existe antes de agregarla
             if (!Schema::hasColumn('plans', 'estado_aprobacion')) {
                 $table->enum('estado_aprobacion', ['pendiente', 'aprobado', 'rechazado'])
-                    ->default('aprobado')
+                    ->default('pendiente')
                     ->after('estado')
                     ->comment('Estado de aprobación del plan por el administrador');
             }
