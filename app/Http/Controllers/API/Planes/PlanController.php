@@ -70,59 +70,43 @@ class PlanController extends Controller
     public function store(PlanRequest $request): JsonResponse
     {
         try {
-            // DEBUG: Verificar qué está recibiendo el request
-            Log::info('=== DEBUG PLAN STORE ===');
-            Log::info('Request method: ' . $request->method());
-            Log::info('Content-Type: ' . $request->header('Content-Type'));
-            Log::info('Has file imagen_principal: ' . ($request->hasFile('imagen_principal') ? 'YES' : 'NO'));
-            Log::info('Has file imagenes_galeria: ' . ($request->hasFile('imagenes_galeria') ? 'YES' : 'NO'));
-            Log::info('dias type: ' . gettype($request->get('dias')));
-            Log::info('dias value: ' . json_encode($request->get('dias')));
-            Log::info('emprendedores type: ' . gettype($request->get('emprendedores')));
-            Log::info('emprendedores value: ' . json_encode($request->get('emprendedores')));
-            Log::info('=== END DEBUG ===');
-
             $data = $request->validated();
             $data['creado_por_usuario_id'] = Auth::id();
 
-            // 1. Crear el plan primero sin las rutas de archivo
-            $dataSinArchivos = collect($data)->except(['imagen_principal', 'imagenes_galeria'])->all();
-            $plan = $this->planService->create($dataSinArchivos);
-
-            $datosArchivos = [];
-
-            // 2. Gestión de Imagen Principal
+            // ✅ Pasar las imágenes como UploadedFile al servicio para que las procese correctamente
+            // El PlanService.procesarImagenes() se encargará de redimensionar y convertir a WebP
             if ($request->hasFile('imagen_principal')) {
-                $datosArchivos['imagen_principal'] = $this->storeImage($request->file('imagen_principal'), "planes/{$plan->id}");
+                $data['imagen_principal'] = $request->file('imagen_principal');
             }
 
-            // 3. Gestión de Galería
-            $gal = [];
             if ($request->hasFile('imagenes_galeria')) {
-                foreach ($request->file('imagenes_galeria') as $file) {
-                    $gal[] = $this->storeImage($file, "planes/{$plan->id}");
-                }
-            }
-            if ($gal) {
-                $datosArchivos['imagenes_galeria'] = $gal;
+                $data['imagenes_galeria'] = $request->file('imagenes_galeria');
             }
 
-            // 4. Actualizar el plan con las rutas
-            if (!empty($datosArchivos)) {
-                $this->planService->update($plan->id, $datosArchivos);
-            }
+            // Crear el plan (el servicio procesará las imágenes automáticamente)
+            $plan = $this->planService->create($data);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Plan creado correctamente',
-                'data' => $plan->fresh() // Devolvemos el plan con las rutas de imágenes
+                'data' => $plan->fresh(['dias.servicios', 'emprendedores'])
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            Log::error('Error al crear plan: ' . $e->getMessage());
+            Log::error('Error al crear plan: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'request_data' => $request->except(['imagen_principal', 'imagenes_galeria', 'password']),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear el plan: ' . $e->getMessage()
+                'message' => config('app.debug') ? $e->getMessage() : 'Error al crear el plan',
+                'error' => config('app.debug') ? [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ] : null
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -9,6 +9,7 @@ use App\Models\PlanInscripcion;
 use App\Models\PlanEmprendedor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Laravel\Facades\Image;
 use Exception;
@@ -117,8 +118,15 @@ class PlanService
         try {
             DB::beginTransaction();
             
-            // Procesar imágenes
+            // ✅ Procesar imágenes ANTES de crear el plan
+            // Esto convierte los UploadedFile a rutas de archivo
             $imagenes = $this->procesarImagenes($data);
+            
+            // ✅ Eliminar los UploadedFile del array antes de crear el plan
+            // (no se pueden guardar objetos UploadedFile en la BD)
+            unset($data['imagen_principal'], $data['imagenes_galeria']);
+            
+            // ✅ Agregar las rutas de imágenes procesadas
             $data = array_merge($data, $imagenes);
             
             // Extraer datos de días y emprendedores
@@ -486,33 +494,55 @@ class PlanService
     {
         $resultado = [];
         
-        // Procesar imagen principal
-        if (isset($data['imagen_principal']) && $data['imagen_principal'] instanceof UploadedFile) {
-            $resultado['imagen_principal'] = $this->guardarImagenWebP(
-                $data['imagen_principal'], 
-                'planes/principales'
-            );
-        } elseif (isset($imagenesAnteriores['imagen_principal'])) {
-            $resultado['imagen_principal'] = $imagenesAnteriores['imagen_principal'];
-        }
-        
-        // Procesar galería de imágenes
-        if (isset($data['imagenes_galeria']) && is_array($data['imagenes_galeria'])) {
-            $galeria = [];
-            $galeriaAnterior = $imagenesAnteriores['imagenes_galeria'] ?? [];
-            
-            foreach ($data['imagenes_galeria'] as $index => $imagen) {
-                if ($imagen instanceof UploadedFile) {
-                    $galeria[] = $this->guardarImagenWebP($imagen, 'planes/galeria');
-                } elseif (is_string($imagen) && isset($galeriaAnterior[$index])) {
-                    // Mantener imagen existente
-                    $galeria[] = $galeriaAnterior[$index];
-                }
+        try {
+            // Procesar imagen principal
+            if (isset($data['imagen_principal']) && $data['imagen_principal'] instanceof UploadedFile) {
+                $resultado['imagen_principal'] = $this->guardarImagenWebP(
+                    $data['imagen_principal'], 
+                    'planes/principales'
+                );
+            } elseif (isset($imagenesAnteriores['imagen_principal'])) {
+                $resultado['imagen_principal'] = $imagenesAnteriores['imagen_principal'];
             }
             
-            $resultado['imagenes_galeria'] = $galeria;
-        } elseif (isset($imagenesAnteriores['imagenes_galeria'])) {
-            $resultado['imagenes_galeria'] = $imagenesAnteriores['imagenes_galeria'];
+            // Procesar galería de imágenes
+            if (isset($data['imagenes_galeria'])) {
+                $galeria = [];
+                $galeriaAnterior = $imagenesAnteriores['imagenes_galeria'] ?? [];
+                
+                // Manejar tanto arrays de UploadedFile como un solo UploadedFile
+                $imagenes = is_array($data['imagenes_galeria']) 
+                    ? $data['imagenes_galeria'] 
+                    : [$data['imagenes_galeria']];
+                
+                foreach ($imagenes as $index => $imagen) {
+                    if ($imagen instanceof UploadedFile) {
+                        try {
+                            $galeria[] = $this->guardarImagenWebP($imagen, 'planes/galeria');
+                        } catch (\Exception $e) {
+                            \Log::error('Error procesando imagen de galería: ' . $e->getMessage(), [
+                                'index' => $index,
+                                'archivo' => $imagen->getClientOriginalName(),
+                            ]);
+                            // Continuar con las demás imágenes aunque una falle
+                        }
+                    } elseif (is_string($imagen) && isset($galeriaAnterior[$index])) {
+                        // Mantener imagen existente
+                        $galeria[] = $galeriaAnterior[$index];
+                    }
+                }
+                
+                if (!empty($galeria)) {
+                    $resultado['imagenes_galeria'] = $galeria;
+                }
+            } elseif (isset($imagenesAnteriores['imagenes_galeria'])) {
+                $resultado['imagenes_galeria'] = $imagenesAnteriores['imagenes_galeria'];
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error en procesarImagenes: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+            // No lanzar excepción aquí, permitir que el plan se cree sin imágenes si hay error
         }
         
         return $resultado;
@@ -523,27 +553,57 @@ class PlanService
      */
     private function guardarImagenWebP(UploadedFile $archivo, string $directorio): string
     {
-        // Crear directorio si no existe
-        $rutaCompleta = storage_path("app/public/{$directorio}");
-        if (!file_exists($rutaCompleta)) {
-            mkdir($rutaCompleta, 0755, true);
+        try {
+            // Crear directorio si no existe
+            $rutaCompleta = storage_path("app/public/{$directorio}");
+            if (!file_exists($rutaCompleta)) {
+                mkdir($rutaCompleta, 0755, true);
+            }
+
+            // Nombre único
+            $nombreArchivo = uniqid() . '.webp';
+            $rutaArchivo = "{$directorio}/{$nombreArchivo}";
+            $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
+
+            // Leer contenido binario
+            $contenido = file_get_contents($archivo->getRealPath());
+            
+            if ($contenido === false) {
+                throw new Exception('No se pudo leer el contenido del archivo');
+            }
+
+            // Crear imagen desde binario
+            $imagen = Image::read($contenido);
+            
+            // Obtener dimensiones originales
+            $width = $imagen->width();
+            $height = $imagen->height();
+            
+            // Redimensionar solo si es necesario (máximo 1200px de ancho, manteniendo proporción)
+            if ($width > 1200) {
+                $imagen = $imagen->scaleDown(width: 1200);
+            } elseif ($height > 1200) {
+                // Si el ancho es menor pero la altura es mayor, redimensionar por altura
+                $imagen = $imagen->scaleDown(height: 1200);
+            }
+
+            // Guardar como WebP con manejo de errores
+            $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
+            
+            // Verificar que el archivo se guardó correctamente
+            if (!file_exists($rutaCompletaArchivo)) {
+                throw new Exception('No se pudo guardar el archivo WebP');
+            }
+
+            return $rutaArchivo;
+        } catch (\Exception $e) {
+            \Log::error('Error en guardarImagenWebP: ' . $e->getMessage(), [
+                'archivo' => $archivo->getClientOriginalName(),
+                'directorio' => $directorio,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw new Exception('Error al procesar la imagen: ' . $e->getMessage());
         }
-
-        // Nombre único
-        $nombreArchivo = uniqid() . '.webp';
-        $rutaArchivo = "{$directorio}/{$nombreArchivo}";
-        $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
-
-        // Leer contenido binario
-        $contenido = file_get_contents($archivo->getRealPath());
-
-        // Crear imagen desde binario y redimensionar
-        $imagen = Image::read($contenido)->scaleDown(width: 1200);
-
-        // Guardar como WebP
-        $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
-
-        return $rutaArchivo;
     }
     
     /**
