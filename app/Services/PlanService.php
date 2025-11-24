@@ -461,8 +461,25 @@ class PlanService
      */
     private function agregarServiciosADia(int $diaId, array $serviciosData): void
     {
-        foreach ($serviciosData as $servicioData) {
+        foreach ($serviciosData as $index => $servicioData) {
             $servicioData['plan_dia_id'] = $diaId;
+            // ✅ Asegurar que 'orden' tenga un valor (usar índice + 1 si no viene)
+            if (!isset($servicioData['orden']) || $servicioData['orden'] === null) {
+                $servicioData['orden'] = $index + 1;
+            }
+            // ✅ Asegurar valores por defecto para otros campos
+            if (!isset($servicioData['es_opcional'])) {
+                $servicioData['es_opcional'] = false;
+            }
+            if (!isset($servicioData['precio_adicional'])) {
+                $servicioData['precio_adicional'] = 0;
+            }
+            if (!isset($servicioData['capacidad_personas'])) {
+                $servicioData['capacidad_personas'] = 0;
+            }
+            if (!isset($servicioData['cantidad_personas'])) {
+                $servicioData['cantidad_personas'] = 0;
+            }
             PlanDiaServicio::create($servicioData);
         }
     }
