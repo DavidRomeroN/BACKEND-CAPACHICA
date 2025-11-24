@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage; // Necesario para el método destroy
+use Illuminate\Support\Facades\Log; // Para logging
 
 class EventController extends Controller
 {
@@ -149,6 +150,17 @@ class EventController extends Controller
     public function update(Request $request, int $id): JsonResponse
     {
         try {
+            // ✅ DEBUG: Logging para diagnosticar el problema
+            Log::info('=== EVENTO UPDATE START ===', [
+                'id' => $id,
+                'method' => $request->method(),
+                'content_type' => $request->header('Content-Type'),
+                'has_file_imagen' => $request->hasFile('imagen'),
+                'has_file_galeria' => $request->hasFile('galeria'),
+                'all_files_keys' => array_keys($request->allFiles()),
+                'all_files_count' => count($request->allFiles()),
+            ]);
+
             $validated = $request->validate([
                 'nombre' => 'sometimes|string|max:255',
                 'descripcion' => 'sometimes|string',
@@ -163,6 +175,9 @@ class EventController extends Controller
                 'coordenada_y' => 'sometimes|numeric',
                 'id_emprendedor' => 'sometimes|exists:emprendedores,id',
                 'que_llevar' => 'nullable|string',
+                'imagen' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:4096', // ✅ AGREGADO
+                'galeria' => 'sometimes|array|max:12', // ✅ AGREGADO
+                'galeria.*' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:4096', // ✅ AGREGADO
                 'sliders' => 'sometimes|array',
                 'sliders.*.id' => 'sometimes|integer|exists:sliders,id',
                 'sliders.*.url' => 'sometimes|nullable|string',
@@ -179,6 +194,45 @@ class EventController extends Controller
             $deletedSlidersIds = $validated['deleted_sliders'] ?? [];
 
             $validatedSinSliders = collect($validated)->except(['sliders', 'deleted_sliders'])->all();
+
+            // ✅ NUEVO: Procesar imagen principal
+            Log::info('Checking imagen file...', [
+                'hasFile_imagen' => $request->hasFile('imagen'),
+                'file_imagen' => $request->hasFile('imagen') ? $request->file('imagen')->getClientOriginalName() : 'NO FILE',
+            ]);
+            
+            if ($request->hasFile('imagen')) {
+                Log::info('Processing imagen file...');
+                $evento = $this->eventoRepository->findById($id);
+                if ($evento && $evento->imagen) {
+                    $this->deleteImage($evento->imagen); // Eliminar imagen anterior
+                }
+                $imagenPath = $this->storeImage($request->file('imagen'), 'eventos');
+                Log::info('Imagen stored successfully', ['path' => $imagenPath]);
+                $validatedSinSliders['imagen'] = $imagenPath;
+            } else {
+                Log::warning('No imagen file found in request');
+            }
+
+            // ✅ NUEVO: Procesar galería de imágenes
+            if ($request->hasFile('galeria')) {
+                $evento = $this->eventoRepository->findById($id);
+                // Eliminar imágenes anteriores de la galería
+                if ($evento && $evento->galeria && is_array($evento->galeria)) {
+                    foreach ($evento->galeria as $oldImage) {
+                        if ($oldImage) {
+                            $this->deleteImage($oldImage);
+                        }
+                    }
+                }
+                
+                $galeriaPaths = [];
+                foreach ($request->file('galeria') as $imagen) {
+                    $galeriaPath = $this->storeImage($imagen, 'eventos');
+                    $galeriaPaths[] = $galeriaPath;
+                }
+                $validatedSinSliders['galeria'] = $galeriaPaths;
+            }
 
             // 1. Procesar los sliders
             if (!empty($sliders)) {
@@ -230,7 +284,7 @@ class EventController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $evento,
+                'data' => $evento->fresh(), // ✅ Asegurar que se carguen las relaciones actualizadas
                 'message' => 'Evento actualizado exitosamente'
             ]);
         } catch (\Exception $e) {
