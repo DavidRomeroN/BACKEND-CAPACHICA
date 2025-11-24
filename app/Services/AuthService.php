@@ -60,8 +60,15 @@ class AuthService
             $user->assignRole('user');
         }
         
+        // ✅ TEMPORAL: Marcar email como verificado automáticamente (sin enviar correo)
+        // Esto permite que los usuarios puedan hacer login inmediatamente
+        $user->email_verified_at = now();
+        $user->save();
+        
+        // ✅ TEMPORAL: Comentar el envío de correo de verificación
+        // El correo no se puede enviar desde Render (plan gratuito) debido a restricciones de red
         // Dispatch registered event to trigger verification email
-        event(new Registered($user));
+        // event(new Registered($user));
         
         return $user;
     }

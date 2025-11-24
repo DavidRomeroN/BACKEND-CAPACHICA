@@ -69,7 +69,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'email_verified' => $user->hasVerifiedEmail(),
-        ], 'Usuario registrado correctamente. Se ha enviado un correo de verificación.', 201);
+        ], 'Usuario registrado correctamente.', 201);
     }
     
     /**
@@ -92,12 +92,15 @@ class AuthController extends Controller
         if (isset($result['error']) && $result['error'] === 'inactive_user') {
             return $this->errorResponse('Usuario inactivo', 403);
         }
+        
+        // ✅ TEMPORAL: Verificación de email deshabilitada
+        // El correo no se puede enviar desde Render (plan gratuito) debido a restricciones de red
         // Verificar si el correo está verificado
-        if (!$result['email_verified']) {
-            return $this->errorResponse('Por favor, verifica tu correo electrónico para poder de iniciar sesión', 403, [
-                'verification_required' => true
-            ]);
-        }
+        // if (!$result['email_verified']) {
+        //     return $this->errorResponse('Por favor, verifica tu correo electrónico para poder de iniciar sesión', 403, [
+        //         'verification_required' => true
+        //     ]);
+        // }
         
         return $this->successResponse([
             'user' => new UserResource($result['user']),
