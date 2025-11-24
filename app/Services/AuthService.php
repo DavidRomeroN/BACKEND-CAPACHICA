@@ -65,6 +65,9 @@ class AuthService
         $user->email_verified_at = now();
         $user->save();
         
+        // ✅ CARGAR ROLES para que UserResource los incluya
+        $user->load('roles');
+        
         // ✅ TEMPORAL: Comentar el envío de correo de verificación
         // El correo no se puede enviar desde Render (plan gratuito) debido a restricciones de red
         // Dispatch registered event to trigger verification email
@@ -110,6 +113,9 @@ class AuthService
         }
         
         $user = User::where('email', $email)->firstOrFail();
+        
+        // ✅ CARGAR ROLES para que UserResource los incluya
+        $user->load('roles');
         
         // Check if the user is active
         if (!$user->active) {
@@ -203,6 +209,9 @@ class AuthService
                 // Update last login time
                 $user->update(['last_login' => now()]);
             }
+            
+            // ✅ CARGAR ROLES para que UserResource los incluya
+            $user->load('roles');
             
             // Delete previous tokens
             $user->tokens()->delete();
