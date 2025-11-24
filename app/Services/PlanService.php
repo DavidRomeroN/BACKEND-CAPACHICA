@@ -9,7 +9,6 @@ use App\Models\PlanInscripcion;
 use App\Models\PlanEmprendedor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\Laravel\Facades\Image;
 use Exception;
@@ -78,9 +77,9 @@ class PlanService
             $query->where('precio_total', '<=', $filtros['precio_max']);
         }
         
-        // Solo mostrar públicos y activos por defecto si no se especifica lo contrario
+        // Solo mostrar públicos, activos y aprobados por defecto si no se especifica lo contrario
         if (!isset($filtros['todos']) || !$filtros['todos']) {
-            $query->publicos()->activos();
+            $query->publicos()->activos()->aprobados();
         }
         
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
@@ -118,15 +117,8 @@ class PlanService
         try {
             DB::beginTransaction();
             
-            // ✅ Procesar imágenes ANTES de crear el plan
-            // Esto convierte los UploadedFile a rutas de archivo
+            // Procesar imágenes
             $imagenes = $this->procesarImagenes($data);
-            
-            // ✅ Eliminar los UploadedFile del array antes de crear el plan
-            // (no se pueden guardar objetos UploadedFile en la BD)
-            unset($data['imagen_principal'], $data['imagenes_galeria']);
-            
-            // ✅ Agregar las rutas de imágenes procesadas
             $data = array_merge($data, $imagenes);
             
             // Extraer datos de días y emprendedores
@@ -142,23 +134,6 @@ class PlanService
             }
             
             unset($data['dias'], $data['emprendedores']);
-            
-            // ✅ Asegurar conversión correcta de tipos antes de crear el plan
-            if (isset($data['es_publico'])) {
-                $data['es_publico'] = filter_var($data['es_publico'], FILTER_VALIDATE_BOOLEAN);
-            }
-            
-            if (isset($data['precio_total']) && $data['precio_total'] !== null) {
-                $data['precio_total'] = (float) $data['precio_total'];
-            }
-            
-            if (isset($data['capacidad']) && $data['capacidad'] !== null) {
-                $data['capacidad'] = (int) $data['capacidad'];
-            }
-            
-            if (isset($data['duracion_dias']) && $data['duracion_dias'] !== null) {
-                $data['duracion_dias'] = (int) $data['duracion_dias'];
-            }
             
             // Mantener compatibilidad con emprendedor_id único
             if (!empty($emprendedoresData) && empty($data['emprendedor_id'])) {
@@ -284,24 +259,8 @@ class PlanService
             ];
             
             $datos = array_merge($defaults, $emprendedorData);
-            
-            // ✅ Asegurar que emprendedor_id existe
-            if (!isset($datos['emprendedor_id']) || $datos['emprendedor_id'] === null) {
-                throw new Exception('El emprendedor_id es requerido para agregar un emprendedor al plan');
-            }
-            
             $emprendedorId = $datos['emprendedor_id'];
             unset($datos['emprendedor_id']);
-            
-            // ✅ Convertir booleanos si vienen como string
-            if (isset($datos['es_organizador_principal'])) {
-                $datos['es_organizador_principal'] = filter_var($datos['es_organizador_principal'], FILTER_VALIDATE_BOOLEAN);
-            }
-            
-            // ✅ Convertir porcentaje_ganancia a float si viene como string
-            if (isset($datos['porcentaje_ganancia']) && $datos['porcentaje_ganancia'] !== null) {
-                $datos['porcentaje_ganancia'] = (float) $datos['porcentaje_ganancia'];
-            }
             
             PlanEmprendedor::create([
                 'plan_id' => $planId,
@@ -444,31 +403,11 @@ class PlanService
      */
     private function crearDiasPlan(int $planId, array $diasData): void
     {
-        foreach ($diasData as $index => $diaData) {
+        foreach ($diasData as $diaData) {
             $serviciosData = $diaData['servicios'] ?? [];
             unset($diaData['servicios']);
             
-            // ✅ Valores por defecto para campos requeridos
             $diaData['plan_id'] = $planId;
-            
-            // ✅ Asegurar que 'orden' tenga un valor si viene null (tiene default en BD pero mejor asegurar)
-            if (!isset($diaData['orden']) || $diaData['orden'] === null) {
-                $diaData['orden'] = $diaData['numero_dia'] ?? ($index + 1);
-            }
-            
-            // ✅ Convertir tipos numéricos correctamente
-            if (isset($diaData['numero_dia']) && $diaData['numero_dia'] !== null) {
-                $diaData['numero_dia'] = (int) $diaData['numero_dia'];
-            }
-            
-            if (isset($diaData['orden']) && $diaData['orden'] !== null) {
-                $diaData['orden'] = (int) $diaData['orden'];
-            }
-            
-            if (isset($diaData['duracion_estimada_minutos']) && $diaData['duracion_estimada_minutos'] !== null) {
-                $diaData['duracion_estimada_minutos'] = (int) $diaData['duracion_estimada_minutos'];
-            }
-            
             $dia = PlanDia::create($diaData);
             
             // Agregar servicios al día
@@ -522,48 +461,8 @@ class PlanService
      */
     private function agregarServiciosADia(int $diaId, array $serviciosData): void
     {
-        foreach ($serviciosData as $index => $servicioData) {
-            // ✅ Valores por defecto para campos requeridos
+        foreach ($serviciosData as $servicioData) {
             $servicioData['plan_dia_id'] = $diaId;
-            
-            // ✅ Asegurar que 'orden' tenga un valor (requerido por la BD)
-            if (!isset($servicioData['orden']) || $servicioData['orden'] === null) {
-                $servicioData['orden'] = $index + 1; // Usar el índice + 1 como orden por defecto
-            }
-            
-            // ✅ Asegurar que 'es_opcional' tenga un valor (requerido por la BD)
-            if (!isset($servicioData['es_opcional'])) {
-                $servicioData['es_opcional'] = false;
-            } else {
-                // Convertir a boolean si viene como string
-                $servicioData['es_opcional'] = filter_var($servicioData['es_opcional'], FILTER_VALIDATE_BOOLEAN);
-            }
-            
-            // ✅ Asegurar que servicio_id existe
-            if (!isset($servicioData['servicio_id']) || $servicioData['servicio_id'] === null) {
-                throw new Exception('El servicio_id es requerido para agregar un servicio al día del plan');
-            }
-            
-            // ✅ Convertir tipos numéricos correctamente
-            if (isset($servicioData['duracion_minutos']) && $servicioData['duracion_minutos'] !== null) {
-                $servicioData['duracion_minutos'] = (int) $servicioData['duracion_minutos'];
-            }
-            
-            if (isset($servicioData['precio_adicional']) && $servicioData['precio_adicional'] !== null) {
-                $servicioData['precio_adicional'] = (float) $servicioData['precio_adicional'];
-            }
-            
-            if (isset($servicioData['capacidad_personas']) && $servicioData['capacidad_personas'] !== null) {
-                $servicioData['capacidad_personas'] = (int) $servicioData['capacidad_personas'];
-            }
-            
-            if (isset($servicioData['cantidad_personas']) && $servicioData['cantidad_personas'] !== null) {
-                $servicioData['cantidad_personas'] = (int) $servicioData['cantidad_personas'];
-            }
-            
-            // ✅ Convertir orden a entero
-            $servicioData['orden'] = (int) $servicioData['orden'];
-            
             PlanDiaServicio::create($servicioData);
         }
     }
@@ -587,150 +486,64 @@ class PlanService
     {
         $resultado = [];
         
-        try {
-            // Procesar imagen principal
-            if (isset($data['imagen_principal']) && $data['imagen_principal'] instanceof UploadedFile) {
-                $resultado['imagen_principal'] = $this->guardarImagenWebP(
-                    $data['imagen_principal'], 
-                    'planes/principales'
-                );
-            } elseif (isset($imagenesAnteriores['imagen_principal'])) {
-                $resultado['imagen_principal'] = $imagenesAnteriores['imagen_principal'];
+        // Procesar imagen principal
+        if (isset($data['imagen_principal']) && $data['imagen_principal'] instanceof UploadedFile) {
+            $resultado['imagen_principal'] = $this->guardarImagenWebP(
+                $data['imagen_principal'], 
+                'planes/principales'
+            );
+        } elseif (isset($imagenesAnteriores['imagen_principal'])) {
+            $resultado['imagen_principal'] = $imagenesAnteriores['imagen_principal'];
+        }
+        
+        // Procesar galería de imágenes
+        if (isset($data['imagenes_galeria']) && is_array($data['imagenes_galeria'])) {
+            $galeria = [];
+            $galeriaAnterior = $imagenesAnteriores['imagenes_galeria'] ?? [];
+            
+            foreach ($data['imagenes_galeria'] as $index => $imagen) {
+                if ($imagen instanceof UploadedFile) {
+                    $galeria[] = $this->guardarImagenWebP($imagen, 'planes/galeria');
+                } elseif (is_string($imagen) && isset($galeriaAnterior[$index])) {
+                    // Mantener imagen existente
+                    $galeria[] = $galeriaAnterior[$index];
+                }
             }
             
-            // Procesar galería de imágenes
-            if (isset($data['imagenes_galeria'])) {
-                $galeria = [];
-                $galeriaAnterior = $imagenesAnteriores['imagenes_galeria'] ?? [];
-                
-                // Manejar tanto arrays de UploadedFile como un solo UploadedFile
-                $imagenes = is_array($data['imagenes_galeria']) 
-                    ? $data['imagenes_galeria'] 
-                    : [$data['imagenes_galeria']];
-                
-                foreach ($imagenes as $index => $imagen) {
-                    if ($imagen instanceof UploadedFile) {
-                        try {
-                            $galeria[] = $this->guardarImagenWebP($imagen, 'planes/galeria');
-                        } catch (\Exception $e) {
-                            \Log::error('Error procesando imagen de galería: ' . $e->getMessage(), [
-                                'index' => $index,
-                                'archivo' => $imagen->getClientOriginalName(),
-                            ]);
-                            // Continuar con las demás imágenes aunque una falle
-                        }
-                    } elseif (is_string($imagen) && isset($galeriaAnterior[$index])) {
-                        // Mantener imagen existente
-                        $galeria[] = $galeriaAnterior[$index];
-                    }
-                }
-                
-                if (!empty($galeria)) {
-                    $resultado['imagenes_galeria'] = $galeria;
-                }
-            } elseif (isset($imagenesAnteriores['imagenes_galeria'])) {
-                $resultado['imagenes_galeria'] = $imagenesAnteriores['imagenes_galeria'];
-            }
-        } catch (\Exception $e) {
-            \Log::error('Error en procesarImagenes: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-            // No lanzar excepción aquí, permitir que el plan se cree sin imágenes si hay error
+            $resultado['imagenes_galeria'] = $galeria;
+        } elseif (isset($imagenesAnteriores['imagenes_galeria'])) {
+            $resultado['imagenes_galeria'] = $imagenesAnteriores['imagenes_galeria'];
         }
         
         return $resultado;
     }
     
     /**
-     * Guardar imagen convertida a WebP (o formato original si WebP no está disponible)
+     * Guardar imagen convertida a WebP
      */
     private function guardarImagenWebP(UploadedFile $archivo, string $directorio): string
     {
-        try {
-            // Crear directorio si no existe
-            $rutaCompleta = storage_path("app/public/{$directorio}");
-            if (!file_exists($rutaCompleta)) {
-                mkdir($rutaCompleta, 0755, true);
-            }
-
-            // Leer contenido binario
-            $contenido = file_get_contents($archivo->getRealPath());
-            
-            if ($contenido === false) {
-                throw new Exception('No se pudo leer el contenido del archivo');
-            }
-
-            // Crear imagen desde binario
-            $imagen = Image::read($contenido);
-            
-            // Obtener dimensiones originales
-            $width = $imagen->width();
-            $height = $imagen->height();
-            
-            // Redimensionar solo si es necesario (máximo 1200px de ancho, manteniendo proporción)
-            if ($width > 1200) {
-                $imagen = $imagen->scaleDown(width: 1200);
-            } elseif ($height > 1200) {
-                // Si el ancho es menor pero la altura es mayor, redimensionar por altura
-                $imagen = $imagen->scaleDown(height: 1200);
-            }
-
-            // Verificar si GD tiene soporte para WebP
-            $webpSupported = function_exists('imagewebp') && function_exists('imagecreatefromstring');
-            
-            if ($webpSupported) {
-                try {
-                    // Intentar guardar como WebP
-                    $nombreArchivo = uniqid() . '.webp';
-                    $rutaArchivo = "{$directorio}/{$nombreArchivo}";
-                    $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
-                    
-                    $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
-                    
-                    // Verificar que el archivo se guardó correctamente
-                    if (file_exists($rutaCompletaArchivo)) {
-                        return $rutaArchivo;
-                    }
-                } catch (\Exception $webpError) {
-                    \Log::warning('No se pudo guardar como WebP, usando formato original: ' . $webpError->getMessage());
-                    // Continuar con formato original
-                }
-            }
-            
-            // Fallback: guardar en formato original (JPEG o PNG)
-            $extension = strtolower($archivo->getClientOriginalExtension() ?: 'jpg');
-            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
-                $extension = 'jpg'; // Default a JPEG si la extensión no es válida
-            }
-            
-            $nombreArchivo = uniqid() . '.' . $extension;
-            $rutaArchivo = "{$directorio}/{$nombreArchivo}";
-            $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
-            
-            // Guardar en formato original con calidad optimizada
-            if ($extension === 'jpg' || $extension === 'jpeg') {
-                $imagen->toJpeg(quality: 85)->save($rutaCompletaArchivo);
-            } elseif ($extension === 'png') {
-                $imagen->toPng()->save($rutaCompletaArchivo);
-            } else {
-                // Para otros formatos, usar el método genérico
-                $archivo->storeAs($directorio, $nombreArchivo, 'public');
-            }
-            
-            // Verificar que el archivo se guardó correctamente
-            if (!file_exists($rutaCompletaArchivo)) {
-                throw new Exception('No se pudo guardar el archivo');
-            }
-
-            return $rutaArchivo;
-        } catch (\Exception $e) {
-            \Log::error('Error en guardarImagenWebP: ' . $e->getMessage(), [
-                'archivo' => $archivo->getClientOriginalName(),
-                'directorio' => $directorio,
-                'trace' => $e->getTraceAsString(),
-            ]);
-            throw new Exception('Error al procesar la imagen: ' . $e->getMessage());
+        // Crear directorio si no existe
+        $rutaCompleta = storage_path("app/public/{$directorio}");
+        if (!file_exists($rutaCompleta)) {
+            mkdir($rutaCompleta, 0755, true);
         }
+
+        // Nombre único
+        $nombreArchivo = uniqid() . '.webp';
+        $rutaArchivo = "{$directorio}/{$nombreArchivo}";
+        $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
+
+        // Leer contenido binario
+        $contenido = file_get_contents($archivo->getRealPath());
+
+        // Crear imagen desde binario y redimensionar
+        $imagen = Image::read($contenido)->scaleDown(width: 1200);
+
+        // Guardar como WebP
+        $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
+
+        return $rutaArchivo;
     }
     
     /**
@@ -859,7 +672,8 @@ class PlanService
         ]);
         
         // Aplicar filtros básicos obligatorios
-        $query->publicos()->activos();
+        // Solo mostrar planes aprobados para usuarios públicos
+        $query->publicos()->activos()->aprobados();
         
         // Filtro de cupos disponibles
         if (!empty($filtros['con_cupos']) && $filtros['con_cupos'] === 'true') {
@@ -955,5 +769,21 @@ class PlanService
         });
         
         return $result;
+    }
+
+    /**
+     * Obtener planes pendientes de aprobación
+     */
+    public function getPendientesAprobacion(): Collection
+    {
+        return Plan::pendientesAprobacion()
+            ->with([
+                'creadoPor:id,name,email',
+                'emprendedor:id,nombre,ubicacion',
+                'emprendedores:id,nombre,ubicacion',
+                'dias.servicios:id,nombre,precio_referencial'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }

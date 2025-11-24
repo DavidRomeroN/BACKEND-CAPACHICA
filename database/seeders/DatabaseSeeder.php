@@ -24,9 +24,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // ❌ COMENTADO: Los roles y permisos ya existen en producción
-        // El entrypoint.sh ya verifica y asigna permisos al rol admin
-        // $this->createRolesAndPermissions();
+        // Crear roles y permisos
+        $this->createRolesAndPermissions();
 
         // Crear usuarios admin y usuario normal
         $this->createUsers();

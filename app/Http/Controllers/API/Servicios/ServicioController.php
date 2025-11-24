@@ -6,9 +6,11 @@ use App\Http\Controllers\Concerns\HandlesImages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServicioRequest;
 use App\Repository\ServicioRepository;
+use App\Models\Servicio;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class ServicioController extends Controller
 {
@@ -118,6 +120,14 @@ class ServicioController extends Controller
             // Convertir explícitamente los valores booleanos
             if (isset($data['estado'])) {
                 $data['estado'] = filter_var($data['estado'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+            }
+
+            // Asignar estado_aprobacion según el rol del usuario
+            // Si es admin, se aprueba automáticamente. Si es emprendedor, queda pendiente
+            if (!isset($data['estado_aprobacion'])) {
+                $data['estado_aprobacion'] = Auth::user()->hasRole('admin') 
+                    ? Servicio::ESTADO_APROBACION_APROBADO 
+                    : Servicio::ESTADO_APROBACION_PENDIENTE;
             }
 
             // Procesar los horarios para convertir el campo activo a booleano
@@ -517,6 +527,91 @@ class ServicioController extends Controller
             'success' => true,
             'disponible' => $resultado['disponible'],
             'data' => $resultado,
+        ]);
+    }
+
+    /**
+     * Listar servicios pendientes de aprobación (solo admin)
+     */
+    public function pendientesAprobacion(): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        $servicios = $this->repository->getPendientesAprobacion();
+
+        return response()->json([
+            'success' => true,
+            'data' => $servicios
+        ]);
+    }
+
+    /**
+     * Aprobar un servicio (solo admin)
+     */
+    public function aprobarServicio(int $id): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        $servicio = $this->repository->findById($id);
+
+        if (!$servicio) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Servicio no encontrado'
+            ], 404);
+        }
+
+        $servicio->estado_aprobacion = Servicio::ESTADO_APROBACION_APROBADO;
+        $servicio->save();
+
+        return response()->json([
+            'success' => true,
+            'data' => $servicio,
+            'message' => 'Servicio aprobado exitosamente'
+        ]);
+    }
+
+    /**
+     * Rechazar un servicio (solo admin)
+     */
+    public function rechazarServicio(int $id): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        $servicio = $this->repository->findById($id);
+
+        if (!$servicio) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Servicio no encontrado'
+            ], 404);
+        }
+
+        $servicio->estado_aprobacion = Servicio::ESTADO_APROBACION_RECHAZADO;
+        $servicio->save();
+
+        return response()->json([
+            'success' => true,
+            'data' => $servicio,
+            'message' => 'Servicio rechazado exitosamente'
         ]);
     }
 }

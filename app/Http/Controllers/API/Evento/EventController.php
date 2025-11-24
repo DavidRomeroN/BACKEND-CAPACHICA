@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage; // Necesario para el método destroy
-use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -137,21 +136,9 @@ class EventController extends Controller
                 'message' => 'Evento creado exitosamente'
             ], 201);
         } catch (\Exception $e) {
-            \Log::error('Error al crear evento: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'request_data' => $request->except(['imagen', 'galeria', 'sliders', 'password']),
-            ]);
-
             return response()->json([
                 'success' => false,
-                'message' => config('app.debug') ? $e->getMessage() : 'Error al crear el evento',
-                'error' => config('app.debug') ? [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ] : null
+                'message' => 'Error al crear el evento: ' . $e->getMessage()
             ], 500);
         }
     }

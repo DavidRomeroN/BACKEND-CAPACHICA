@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Spatie\Permission\Models\Role;
 
 class GoogleAuthController extends Controller
 {
@@ -148,16 +147,8 @@ class GoogleAuthController extends Controller
                     'last_login' => now()
                 ]);
                 
-                // Assign default role (crear si no existe)
-                try {
-                    $user->assignRole('user');
-                } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
-                    // Si el rol no existe, crearlo y luego asignarlo
-                    Role::firstOrCreate(
-                        ['name' => 'user', 'guard_name' => 'web']
-                    );
-                    $user->assignRole('user');
-                }
+                // Assign default role
+                $user->assignRole('user');
             } else if (!$user->google_id) {
                 // Update existing user with google_id
                 $updateData = [

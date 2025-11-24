@@ -28,7 +28,10 @@ class ServicioRepository
 
     public function getPaginated(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->model->with(['emprendedor', 'categorias', 'horarios'])->paginate($perPage);
+        // Solo mostrar servicios aprobados en listados públicos
+        return $this->model->aprobados()
+            ->with(['emprendedor', 'categorias', 'horarios'])
+            ->paginate($perPage);
     }
 
     public function findById(int $id): ?Servicio
@@ -187,7 +190,9 @@ class ServicioRepository
 
     public function getActiveServicios(): Collection
     {
+        // Solo mostrar servicios aprobados y activos
         return $this->model->where('estado', true)
+            ->aprobados()
             ->with(['emprendedor', 'categorias', 'horarios'])
             ->get();
     }
@@ -201,9 +206,13 @@ class ServicioRepository
 
     public function getServiciosByCategoria(int $categoriaId): Collection
     {
-        return $this->model->whereHas('categorias', function ($query) use ($categoriaId) {
-            $query->where('categorias.id', $categoriaId);
-        })->with(['emprendedor', 'categorias', 'horarios'])->get();
+        // Solo mostrar servicios aprobados
+        return $this->model->aprobados()
+            ->whereHas('categorias', function ($query) use ($categoriaId) {
+                $query->where('categorias.id', $categoriaId);
+            })
+            ->with(['emprendedor', 'categorias', 'horarios'])
+            ->get();
     }
     
     /**
@@ -346,7 +355,9 @@ class ServicioRepository
             )
         )";
 
+        // Solo mostrar servicios aprobados y activos
         $baseQuery = $this->model->where('estado', true)
+            ->aprobados()
             ->whereNotNull('latitud')
             ->whereNotNull('longitud')
             ->selectRaw("*, $haversine AS distancia", [$latitud, $longitud, $latitud]);
@@ -363,5 +374,15 @@ class ServicioRepository
         return $servicios->load(['emprendedor', 'categorias', 'horarios']);
     }
 
+    /**
+     * Obtener servicios pendientes de aprobación
+     */
+    public function getPendientesAprobacion(): Collection
+    {
+        return $this->model->pendientesAprobacion()
+            ->with(['emprendedor', 'categorias', 'horarios'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
 
 }

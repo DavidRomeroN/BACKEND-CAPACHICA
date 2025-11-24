@@ -54,10 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            // En producción (Docker/Render), también escribir a stderr para ver logs en tiempo real
-            'channels' => env('APP_ENV') === 'production' 
-                ? ['single', 'stderr'] 
-                : explode(',', env('LOG_STACK', 'single')),
+            'channels' => explode(',', env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
 

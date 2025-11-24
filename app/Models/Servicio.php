@@ -20,6 +20,7 @@ class Servicio extends Model
         'precio_referencial',
         'emprendedor_id',
         'estado',
+        'estado_aprobacion',
         'capacidad',
         'latitud',
         'longitud',
@@ -35,6 +36,11 @@ class Servicio extends Model
         'longitud' => 'decimal:7',
         'galeria' => 'array',
     ];
+
+    // Estados de aprobación
+    const ESTADO_APROBACION_PENDIENTE = 'pendiente';
+    const ESTADO_APROBACION_APROBADO = 'aprobado';
+    const ESTADO_APROBACION_RECHAZADO = 'rechazado';
 
     protected $appends = ['imagen_url','galeria_urls'];
 
@@ -144,6 +150,34 @@ class Servicio extends Model
         return collect($this->galeria)->map(fn($p) =>
         filter_var($p, FILTER_VALIDATE_URL) ? $p : Storage::disk('public')->url($p)
         )->all();
+    }
+
+    // Scopes para estado de aprobación
+    public function scopePendientesAprobacion($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_PENDIENTE);
+    }
+
+    public function scopeAprobados($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_APROBADO);
+    }
+
+    public function scopeRechazados($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_RECHAZADO);
+    }
+
+    // Verificar si está aprobado
+    public function estaAprobado(): bool
+    {
+        return $this->estado_aprobacion === self::ESTADO_APROBACION_APROBADO;
+    }
+
+    // Verificar si está pendiente
+    public function estaPendiente(): bool
+    {
+        return $this->estado_aprobacion === self::ESTADO_APROBACION_PENDIENTE;
     }
 
 }

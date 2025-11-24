@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Spatie\Permission\Models\Role;
 
 class AuthService
 {
@@ -49,29 +48,11 @@ class AuthService
 
         $user = User::create($userData);
         
-        // Assign default user role (crear si no existe)
-        try {
-            $user->assignRole('user');
-        } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
-            // Si el rol no existe, crearlo y luego asignarlo
-            Role::firstOrCreate(
-                ['name' => 'user', 'guard_name' => 'web']
-            );
-            $user->assignRole('user');
-        }
+        // Assign default user role
+        $user->assignRole('user');
         
-        // ✅ TEMPORAL: Marcar email como verificado automáticamente (sin enviar correo)
-        // Esto permite que los usuarios puedan hacer login inmediatamente
-        $user->email_verified_at = now();
-        $user->save();
-        
-        // ✅ CARGAR ROLES para que UserResource los incluya
-        $user->load('roles');
-        
-        // ✅ TEMPORAL: Comentar el envío de correo de verificación
-        // El correo no se puede enviar desde Render (plan gratuito) debido a restricciones de red
         // Dispatch registered event to trigger verification email
-        // event(new Registered($user));
+        event(new Registered($user));
         
         return $user;
     }
@@ -114,24 +95,6 @@ class AuthService
         
         $user = User::where('email', $email)->firstOrFail();
         
-        // 🧹 Limpiar cache de permisos ANTES de cargar roles
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        
-        // ✅ Refrescar el usuario para asegurar que los roles se carguen desde la BD
-        $user->refresh();
-        
-        // ✅ CARGAR ROLES para que UserResource los incluya
-        $user->load('roles');
-        
-        // 🔍 DEBUG: Verificar que los roles se cargaron correctamente
-        \Log::info('🔍 DEBUG AUTH SERVICE LOGIN', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'roles_loaded' => $user->relationLoaded('roles'),
-            'roles_count' => $user->roles->count(),
-            'role_names' => $user->getRoleNames()->toArray(),
-        ]);
-        
         // Check if the user is active
         if (!$user->active) {
             return ['error' => 'inactive_user'];
@@ -147,8 +110,8 @@ class AuthService
         
         return [
             'user' => $user,
-            'roles' => $user->getRoleNames()->toArray(), // ✅ Asegurar que sea array
-            'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
             'administra_emprendimientos' => $user->administraEmprendimientos(),
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -194,16 +157,8 @@ class AuthService
                     'last_login' => now(),
                 ]);
                 
-                // Assign user role (crear si no existe)
-                try {
-                    $user->assignRole('user');
-                } catch (\Spatie\Permission\Exceptions\RoleDoesNotExist $e) {
-                    // Si el rol no existe, crearlo y luego asignarlo
-                    Role::firstOrCreate(
-                        ['name' => 'user', 'guard_name' => 'web']
-                    );
-                    $user->assignRole('user');
-                }
+                // Assign user role
+                $user->assignRole('user');
             } 
             // If the user exists but doesn't have google_id, update it
             else if (!$user->google_id) {
@@ -224,9 +179,6 @@ class AuthService
                 // Update last login time
                 $user->update(['last_login' => now()]);
             }
-            
-            // ✅ CARGAR ROLES para que UserResource los incluya
-            $user->load('roles');
             
             // Delete previous tokens
             $user->tokens()->delete();

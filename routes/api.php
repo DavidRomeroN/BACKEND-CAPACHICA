@@ -816,6 +816,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ===== RUTAS DE ADMINISTRACIÓN (CON PERMISOS) =====
 
+    // ===== APROBACIÓN DE SERVICIOS Y PLANES (SOLO ADMIN) =====
+    Route::prefix('admin')->middleware('permission:user_read')->group(function () {
+        // Aprobación de servicios
+        Route::prefix('servicios')->group(function () {
+            Route::get('/pendientes', [ServicioController::class, 'pendientesAprobacion']);
+            Route::post('/{id}/aprobar', [ServicioController::class, 'aprobarServicio']);
+            Route::post('/{id}/rechazar', [ServicioController::class, 'rechazarServicio']);
+        });
+
+        // Aprobación de planes
+        Route::prefix('planes')->group(function () {
+            Route::get('/pendientes', [PlanController::class, 'pendientesAprobacion']);
+            Route::post('/{id}/aprobar', [PlanController::class, 'aprobarPlan']);
+            Route::post('/{id}/rechazar', [PlanController::class, 'rechazarPlan']);
+        });
+    });
+
     // Roles
     Route::prefix('roles')->middleware('permission:role_read')->group(function () {
         Route::get('/', [RoleController::class, 'index']);

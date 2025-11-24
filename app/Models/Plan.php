@@ -21,6 +21,7 @@ class Plan extends Model
         'duracion_dias',
         'es_publico',
         'estado',
+        'estado_aprobacion',
         'creado_por_usuario_id',
         'emprendedor_id', // MANTENER por compatibilidad, pero deprecado
         'precio_total',
@@ -50,6 +51,11 @@ class Plan extends Model
     const ESTADO_ACTIVO = 'activo';
     const ESTADO_INACTIVO = 'inactivo';
     const ESTADO_BORRADOR = 'borrador';
+
+    // Estados de aprobación
+    const ESTADO_APROBACION_PENDIENTE = 'pendiente';
+    const ESTADO_APROBACION_APROBADO = 'aprobado';
+    const ESTADO_APROBACION_RECHAZADO = 'rechazado';
 
     // Niveles de dificultad
     const DIFICULTAD_FACIL = 'facil';
@@ -383,6 +389,34 @@ class Plan extends Model
             ->orWhere('descripcion', 'ILIKE', "%{$termino}%")
             ->orWhere('que_incluye', 'ILIKE', "%{$termino}%");
         });
+    }
+
+    // Scopes para estado de aprobación
+    public function scopePendientesAprobacion($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_PENDIENTE);
+    }
+
+    public function scopeAprobados($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_APROBADO);
+    }
+
+    public function scopeRechazados($query)
+    {
+        return $query->where('estado_aprobacion', self::ESTADO_APROBACION_RECHAZADO);
+    }
+
+    // Verificar si está aprobado
+    public function estaAprobado(): bool
+    {
+        return $this->estado_aprobacion === self::ESTADO_APROBACION_APROBADO;
+    }
+
+    // Verificar si está pendiente
+    public function estaPendiente(): bool
+    {
+        return $this->estado_aprobacion === self::ESTADO_APROBACION_PENDIENTE;
     }
 
     /**

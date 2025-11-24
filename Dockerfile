@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
       libpng-dev \
       libjpeg-dev \
       libfreetype6-dev \
-      libwebp-dev \
       libonig-dev \
       libxml2-dev \
       nginx \
@@ -17,7 +16,7 @@ RUN apt-get update && apt-get install -y \
       git \
       unzip \
       gettext-base \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip gd mbstring xml \
     && mkdir -p /run/php /var/log/supervisor /var/lib/nginx/body /run/nginx \
     && chown -R www-data:www-data /run/php /var/lib/nginx /run/nginx \

@@ -69,7 +69,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
             'email_verified' => $user->hasVerifiedEmail(),
-        ], 'Usuario registrado correctamente.', 201);
+        ], 'Usuario registrado correctamente. Se ha enviado un correo de verificación.', 201);
     }
     
     /**
@@ -92,15 +92,12 @@ class AuthController extends Controller
         if (isset($result['error']) && $result['error'] === 'inactive_user') {
             return $this->errorResponse('Usuario inactivo', 403);
         }
-        
-        // ✅ TEMPORAL: Verificación de email deshabilitada
-        // El correo no se puede enviar desde Render (plan gratuito) debido a restricciones de red
         // Verificar si el correo está verificado
-        // if (!$result['email_verified']) {
-        //     return $this->errorResponse('Por favor, verifica tu correo electrónico para poder de iniciar sesión', 403, [
-        //         'verification_required' => true
-        //     ]);
-        // }
+        if (!$result['email_verified']) {
+            return $this->errorResponse('Por favor, verifica tu correo electrónico para poder de iniciar sesión', 403, [
+                'verification_required' => true
+            ]);
+        }
         
         return $this->successResponse([
             'user' => new UserResource($result['user']),
@@ -162,21 +159,12 @@ class AuthController extends Controller
     public function profile(): JsonResponse
     {
         $user = Auth::user();
-        
-        // 🧹 Limpiar cache de permisos ANTES de cargar roles
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-        
-        // ✅ Refrescar el usuario para asegurar que los roles se carguen desde la BD
-        $user->refresh();
-        
-        // ✅ CARGAR ROLES para que UserResource los incluya
-        $user->load('roles');
         $user->load('emprendimientos.asociacion');
         
         return $this->successResponse([
             'user' => new UserResource($user),
-            'roles' => $user->getRoleNames()->toArray(), // ✅ Asegurar que sea array
-            'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name'),
             'administra_emprendimientos' => $user->administraEmprendimientos(),
             'emprendimientos' => $user->emprendimientos,
             'email_verified' => $user->hasVerifiedEmail(),

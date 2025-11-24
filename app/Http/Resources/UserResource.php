@@ -35,8 +35,7 @@ class UserResource extends JsonResource
         
         // Incluir información de roles si la relación está cargada
         if ($this->relationLoaded('roles')) {
-            // ✅ Convertir Collection a array para asegurar serialización correcta
-            $userData['roles'] = $this->getRoleNames()->toArray();
+            $userData['roles'] = $this->getRoleNames();
             $userData['is_admin'] = $this->hasRole('admin');
             
             // Incluir información más detallada sobre los roles

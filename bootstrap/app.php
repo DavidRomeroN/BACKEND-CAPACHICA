@@ -78,7 +78,7 @@ return Application::configure(basePath: dirname(__DIR__))
     
         // Error de validación
         $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
-            // Log de errores de validación (a archivo)
+            // Log de errores de validación
             \Log::warning('Error de validación (422)', [
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
@@ -91,17 +91,6 @@ return Application::configure(basePath: dirname(__DIR__))
                     'authorization' => $request->header('Authorization') ? 'present' : 'missing',
                 ],
             ]);
-            
-            // ✅ NUEVO: También escribir a stderr para que aparezca en logs de Render/Docker
-            $logMessage = sprintf(
-                "[VALIDATION ERROR 422] %s %s - Errors: %s - User: %s - Data: %s",
-                $request->method(),
-                $request->fullUrl(),
-                json_encode($e->errors()),
-                \Auth::id() ?? 'guest',
-                json_encode($request->except(['password', 'password_confirmation', 'current_password']))
-            );
-            error_log($logMessage);
             
             if ($request->expectsJson()) {
                 return response()->json([

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\HandlesImages; // Asumimos la existencia de este trait
 use App\Services\PlanService;
 use App\Http\Requests\PlanRequest;
+use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -70,43 +71,67 @@ class PlanController extends Controller
     public function store(PlanRequest $request): JsonResponse
     {
         try {
+            // DEBUG: Verificar qué está recibiendo el request
+            Log::info('=== DEBUG PLAN STORE ===');
+            Log::info('Request method: ' . $request->method());
+            Log::info('Content-Type: ' . $request->header('Content-Type'));
+            Log::info('Has file imagen_principal: ' . ($request->hasFile('imagen_principal') ? 'YES' : 'NO'));
+            Log::info('Has file imagenes_galeria: ' . ($request->hasFile('imagenes_galeria') ? 'YES' : 'NO'));
+            Log::info('dias type: ' . gettype($request->get('dias')));
+            Log::info('dias value: ' . json_encode($request->get('dias')));
+            Log::info('emprendedores type: ' . gettype($request->get('emprendedores')));
+            Log::info('emprendedores value: ' . json_encode($request->get('emprendedores')));
+            Log::info('=== END DEBUG ===');
+
             $data = $request->validated();
             $data['creado_por_usuario_id'] = Auth::id();
 
-            // ✅ Pasar las imágenes como UploadedFile al servicio para que las procese correctamente
-            // El PlanService.procesarImagenes() se encargará de redimensionar y convertir a WebP
+            // Asignar estado_aprobacion según el rol del usuario
+            // Si es admin, se aprueba automáticamente. Si es emprendedor, queda pendiente
+            if (!isset($data['estado_aprobacion'])) {
+                $data['estado_aprobacion'] = Auth::user()->hasRole('admin') 
+                    ? Plan::ESTADO_APROBACION_APROBADO 
+                    : Plan::ESTADO_APROBACION_PENDIENTE;
+            }
+
+            // 1. Crear el plan primero sin las rutas de archivo
+            $dataSinArchivos = collect($data)->except(['imagen_principal', 'imagenes_galeria'])->all();
+            $plan = $this->planService->create($dataSinArchivos);
+
+            $datosArchivos = [];
+
+            // 2. Gestión de Imagen Principal
             if ($request->hasFile('imagen_principal')) {
-                $data['imagen_principal'] = $request->file('imagen_principal');
+                $datosArchivos['imagen_principal'] = $this->storeImage($request->file('imagen_principal'), "planes/{$plan->id}");
             }
 
+            // 3. Gestión de Galería
+            $gal = [];
             if ($request->hasFile('imagenes_galeria')) {
-                $data['imagenes_galeria'] = $request->file('imagenes_galeria');
+                foreach ($request->file('imagenes_galeria') as $file) {
+                    $gal[] = $this->storeImage($file, "planes/{$plan->id}");
+                }
+            }
+            if ($gal) {
+                $datosArchivos['imagenes_galeria'] = $gal;
             }
 
-            // Crear el plan (el servicio procesará las imágenes automáticamente)
-            $plan = $this->planService->create($data);
+            // 4. Actualizar el plan con las rutas
+            if (!empty($datosArchivos)) {
+                $this->planService->update($plan->id, $datosArchivos);
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Plan creado correctamente',
-                'data' => $plan->fresh(['dias.servicios', 'emprendedores'])
+                'data' => $plan->fresh() // Devolvemos el plan con las rutas de imágenes
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            Log::error('Error al crear plan: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'request_data' => $request->except(['imagen_principal', 'imagenes_galeria', 'password']),
-            ]);
+            Log::error('Error al crear plan: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => config('app.debug') ? $e->getMessage() : 'Error al crear el plan',
-                'error' => config('app.debug') ? [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ] : null
+                'message' => 'Error al crear el plan: ' . $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -415,6 +440,118 @@ class PlanController extends Controller
                 'success' => false,
                 'message' => 'Error al procesar la solicitud',
                 'error' => config('app.debug') ? $e->getMessage() : 'Error interno del servidor'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Listar planes pendientes de aprobación (solo admin)
+     */
+    public function pendientesAprobacion(): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        try {
+            $planes = $this->planService->getPendientesAprobacion();
+
+            return response()->json([
+                'success' => true,
+                'data' => $planes
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener planes pendientes: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Aprobar un plan (solo admin)
+     */
+    public function aprobarPlan($id): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        try {
+            $plan = $this->planService->getById($id);
+
+            if (!$plan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Plan no encontrado'
+                ], 404);
+            }
+
+            $plan->estado_aprobacion = Plan::ESTADO_APROBACION_APROBADO;
+            $plan->save();
+
+            return response()->json([
+                'success' => true,
+                'data' => $plan,
+                'message' => 'Plan aprobado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al aprobar plan: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Rechazar un plan (solo admin)
+     */
+    public function rechazarPlan($id): JsonResponse
+    {
+        // Verificar que el usuario sea admin
+        if (!Auth::user()->hasRole('admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para realizar esta acción'
+            ], 403);
+        }
+
+        try {
+            $plan = $this->planService->getById($id);
+
+            if (!$plan) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Plan no encontrado'
+                ], 404);
+            }
+
+            $plan->estado_aprobacion = Plan::ESTADO_APROBACION_RECHAZADO;
+            $plan->save();
+
+            return response()->json([
+                'success' => true,
+                'data' => $plan,
+                'message' => 'Plan rechazado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al rechazar plan: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
