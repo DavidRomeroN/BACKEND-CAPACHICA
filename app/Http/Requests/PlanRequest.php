@@ -30,14 +30,16 @@ class PlanRequest extends FormRequest
         if ($this->isMethod('POST')) {
             $hasPermission = $user->hasPermissionTo('plan_create');
             $hasAdminRole = $user->hasRole('admin');
+            $hasEmprendedorRole = $user->hasRole('emprendedor'); // ✅ AGREGADO: Verificar rol emprendedor
             $hasEmprendimientos = $user->emprendimientos()->exists();
-            $authorized = $hasPermission || $hasAdminRole || $hasEmprendimientos;
+            $authorized = $hasPermission || $hasAdminRole || $hasEmprendedorRole || $hasEmprendimientos;
             
             if (!$authorized) {
                 \Log::warning('PlanRequest::authorize() - POST denegado', [
                     'user_id' => $user->id,
                     'has_permission_plan_create' => $hasPermission,
                     'has_admin_role' => $hasAdminRole,
+                    'has_emprendedor_role' => $hasEmprendedorRole, // ✅ AGREGADO
                     'has_emprendimientos' => $hasEmprendimientos,
                     'url' => $this->fullUrl(),
                 ]);
@@ -234,41 +236,6 @@ class PlanRequest extends FormRequest
     }
 
     /**
-     * Additional validation rules after base validation.
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $dias = $this->input('dias', []);
-            if (!is_array($dias)) {
-                return;
-            }
-
-            foreach ($dias as $diaIndex => $dia) {
-                if (!is_array($dia) || !isset($dia['servicios']) || !is_array($dia['servicios'])) {
-                    continue;
-                }
-
-                foreach ($dia['servicios'] as $servicioIndex => $servicio) {
-                    if (!is_array($servicio)) {
-                        continue;
-                    }
-
-                    $capacidad = $servicio['capacidad_personas'] ?? null;
-                    $cantidad = $servicio['cantidad_personas'] ?? null;
-
-                    if (is_numeric($capacidad) && is_numeric($cantidad) && (int) $cantidad > (int) $capacidad) {
-                        $validator->errors()->add(
-                            "dias.$diaIndex.servicios.$servicioIndex.cantidad_personas",
-                            'La cantidad de personas no puede superar la capacidad del servicio.'
-                        );
-                    }
-                }
-            }
-        });
-    }
-    
-    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation()
@@ -317,6 +284,7 @@ class PlanRequest extends FormRequest
 
     /**
      * Configure the validator instance.
+     * Combina todas las validaciones adicionales en un solo método.
      */
     public function withValidator($validator)
     {
