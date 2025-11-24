@@ -234,41 +234,6 @@ class PlanRequest extends FormRequest
     }
 
     /**
-     * Additional validation rules after base validation.
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $dias = $this->input('dias', []);
-            if (!is_array($dias)) {
-                return;
-            }
-
-            foreach ($dias as $diaIndex => $dia) {
-                if (!is_array($dia) || !isset($dia['servicios']) || !is_array($dia['servicios'])) {
-                    continue;
-                }
-
-                foreach ($dia['servicios'] as $servicioIndex => $servicio) {
-                    if (!is_array($servicio)) {
-                        continue;
-                    }
-
-                    $capacidad = $servicio['capacidad_personas'] ?? null;
-                    $cantidad = $servicio['cantidad_personas'] ?? null;
-
-                    if (is_numeric($capacidad) && is_numeric($cantidad) && (int) $cantidad > (int) $capacidad) {
-                        $validator->errors()->add(
-                            "dias.$diaIndex.servicios.$servicioIndex.cantidad_personas",
-                            'La cantidad de personas no puede superar la capacidad del servicio.'
-                        );
-                    }
-                }
-            }
-        });
-    }
-    
-    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation()
@@ -321,6 +286,32 @@ class PlanRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            $dias = $this->input('dias', []);
+            
+            // Validar capacidad vs cantidad de personas en servicios
+            if (is_array($dias)) {
+                foreach ($dias as $diaIndex => $dia) {
+                    if (!is_array($dia) || !isset($dia['servicios']) || !is_array($dia['servicios'])) {
+                        continue;
+                    }
+
+                    foreach ($dia['servicios'] as $servicioIndex => $servicio) {
+                        if (!is_array($servicio)) {
+                            continue;
+                        }
+
+                        $capacidad = $servicio['capacidad_personas'] ?? null;
+                        $cantidad = $servicio['cantidad_personas'] ?? null;
+
+                        if (is_numeric($capacidad) && is_numeric($cantidad) && (int) $cantidad > (int) $capacidad) {
+                            $validator->errors()->add(
+                                "dias.$diaIndex.servicios.$servicioIndex.cantidad_personas",
+                                'La cantidad de personas no puede superar la capacidad del servicio.'
+                            );
+                        }
+                    }
+                }
+            }
             
             // Validar que el número de días coincida con la duración
             if ($this->has('dias') && $this->has('duracion_dias')) {
