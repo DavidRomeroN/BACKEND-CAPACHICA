@@ -22,6 +22,18 @@ try {
 }
 " || echo "⚠️  Error verificando roles (continuando...)"
 
+# 🧹 Limpiar cache de permisos para asegurar que los cambios se reflejen
+echo "🧹 Limpiando cache de permisos..."
+php artisan tinker --execute="
+try {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    echo '✅ Cache de permisos limpiado correctamente';
+} catch (\Exception \$e) {
+    echo '⚠️  Error limpiando cache de permisos: ' . \$e->getMessage();
+}
+" || echo "⚠️  Error limpiando cache de permisos (continuando...)"
+php artisan cache:clear || echo "⚠️  Error limpiando cache general (continuando...)"
+
 echo "⚡ Optimizando configuración..."
 php artisan config:cache || echo "⚠️  Error en config:cache (continuando...)"
 php artisan route:cache || echo "⚠️  Error en route:cache (continuando...)"

@@ -162,6 +162,9 @@ class AuthController extends Controller
     public function profile(): JsonResponse
     {
         $user = Auth::user();
+        
+        // ✅ CARGAR ROLES para que UserResource los incluya
+        $user->load('roles');
         $user->load('emprendimientos.asociacion');
         
         return $this->successResponse([

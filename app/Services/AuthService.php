@@ -117,6 +117,15 @@ class AuthService
         // ✅ CARGAR ROLES para que UserResource los incluya
         $user->load('roles');
         
+        // 🔍 DEBUG: Verificar que los roles se cargaron correctamente
+        \Log::info('🔍 DEBUG AUTH SERVICE LOGIN', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'roles_loaded' => $user->relationLoaded('roles'),
+            'roles_count' => $user->roles->count(),
+            'role_names' => $user->getRoleNames()->toArray(),
+        ]);
+        
         // Check if the user is active
         if (!$user->active) {
             return ['error' => 'inactive_user'];
