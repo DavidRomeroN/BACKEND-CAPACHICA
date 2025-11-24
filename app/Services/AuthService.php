@@ -114,6 +114,12 @@ class AuthService
         
         $user = User::where('email', $email)->firstOrFail();
         
+        // 🧹 Limpiar cache de permisos ANTES de cargar roles
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        
+        // ✅ Refrescar el usuario para asegurar que los roles se carguen desde la BD
+        $user->refresh();
+        
         // ✅ CARGAR ROLES para que UserResource los incluya
         $user->load('roles');
         
@@ -141,8 +147,8 @@ class AuthService
         
         return [
             'user' => $user,
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'roles' => $user->getRoleNames()->toArray(), // ✅ Asegurar que sea array
+            'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
             'administra_emprendimientos' => $user->administraEmprendimientos(),
             'access_token' => $token,
             'token_type' => 'Bearer',

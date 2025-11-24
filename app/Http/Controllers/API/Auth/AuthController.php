@@ -163,14 +163,20 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         
+        // 🧹 Limpiar cache de permisos ANTES de cargar roles
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        
+        // ✅ Refrescar el usuario para asegurar que los roles se carguen desde la BD
+        $user->refresh();
+        
         // ✅ CARGAR ROLES para que UserResource los incluya
         $user->load('roles');
         $user->load('emprendimientos.asociacion');
         
         return $this->successResponse([
             'user' => new UserResource($user),
-            'roles' => $user->getRoleNames(),
-            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'roles' => $user->getRoleNames()->toArray(), // ✅ Asegurar que sea array
+            'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
             'administra_emprendimientos' => $user->administraEmprendimientos(),
             'emprendimientos' => $user->emprendimientos,
             'email_verified' => $user->hasVerifiedEmail(),
