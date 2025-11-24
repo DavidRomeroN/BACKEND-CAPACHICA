@@ -7,20 +7,28 @@ php artisan package:discover --ansi || true
 echo " Ejecutando migraciones..."
 php artisan migrate --force || echo "⚠️  Error en migraciones (continuando...)"
 
-# ✅ Asegurar que los roles básicos existan (crítico para el funcionamiento)
-echo "🔐 Verificando roles básicos..."
+# ✅ Ejecutar seeders para crear roles, permisos y datos iniciales
+echo "🌱 Ejecutando seeders (roles, permisos, etc)..."
+php artisan db:seed --force || echo "⚠️  Error en seeders (continuando...)"
+
+# ✅ Asegurar que el rol admin tenga TODOS los permisos (por si el seeder falló parcialmente)
+echo "🔐 Verificando permisos del rol admin..."
 php artisan tinker --execute="
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 try {
-    Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'emprendedor', 'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'moderador', 'guard_name' => 'web']);
-    echo '✅ Roles verificados/creados correctamente';
+    \$adminRole = Role::where('name', 'admin')->where('guard_name', 'web')->first();
+    if (\$adminRole && Permission::count() > 0) {
+        // Asegurar que el rol admin tenga TODOS los permisos existentes
+        \$adminRole->syncPermissions(Permission::all());
+        echo '✅ Permisos del rol admin verificados (' . Permission::count() . ' permisos)';
+    } else {
+        echo '⚠️  Rol admin o permisos no encontrados';
+    }
 } catch (\Exception \$e) {
-    echo '⚠️  Error verificando roles: ' . \$e->getMessage();
+    echo '⚠️  Error verificando permisos: ' . \$e->getMessage();
 }
-" || echo "⚠️  Error verificando roles (continuando...)"
+" || echo "⚠️  Error verificando permisos (continuando...)"
 
 # 🧹 Limpiar cache de permisos para asegurar que los cambios se reflejen
 echo "🧹 Limpiando cache de permisos..."
