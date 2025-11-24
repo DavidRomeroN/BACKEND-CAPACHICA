@@ -143,6 +143,23 @@ class PlanService
             
             unset($data['dias'], $data['emprendedores']);
             
+            // ✅ Asegurar conversión correcta de tipos antes de crear el plan
+            if (isset($data['es_publico'])) {
+                $data['es_publico'] = filter_var($data['es_publico'], FILTER_VALIDATE_BOOLEAN);
+            }
+            
+            if (isset($data['precio_total']) && $data['precio_total'] !== null) {
+                $data['precio_total'] = (float) $data['precio_total'];
+            }
+            
+            if (isset($data['capacidad']) && $data['capacidad'] !== null) {
+                $data['capacidad'] = (int) $data['capacidad'];
+            }
+            
+            if (isset($data['duracion_dias']) && $data['duracion_dias'] !== null) {
+                $data['duracion_dias'] = (int) $data['duracion_dias'];
+            }
+            
             // Mantener compatibilidad con emprendedor_id único
             if (!empty($emprendedoresData) && empty($data['emprendedor_id'])) {
                 // Si hay múltiples emprendedores, usar el organizador principal como emprendedor_id legacy
@@ -267,8 +284,24 @@ class PlanService
             ];
             
             $datos = array_merge($defaults, $emprendedorData);
+            
+            // ✅ Asegurar que emprendedor_id existe
+            if (!isset($datos['emprendedor_id']) || $datos['emprendedor_id'] === null) {
+                throw new Exception('El emprendedor_id es requerido para agregar un emprendedor al plan');
+            }
+            
             $emprendedorId = $datos['emprendedor_id'];
             unset($datos['emprendedor_id']);
+            
+            // ✅ Convertir booleanos si vienen como string
+            if (isset($datos['es_organizador_principal'])) {
+                $datos['es_organizador_principal'] = filter_var($datos['es_organizador_principal'], FILTER_VALIDATE_BOOLEAN);
+            }
+            
+            // ✅ Convertir porcentaje_ganancia a float si viene como string
+            if (isset($datos['porcentaje_ganancia']) && $datos['porcentaje_ganancia'] !== null) {
+                $datos['porcentaje_ganancia'] = (float) $datos['porcentaje_ganancia'];
+            }
             
             PlanEmprendedor::create([
                 'plan_id' => $planId,
@@ -411,11 +444,31 @@ class PlanService
      */
     private function crearDiasPlan(int $planId, array $diasData): void
     {
-        foreach ($diasData as $diaData) {
+        foreach ($diasData as $index => $diaData) {
             $serviciosData = $diaData['servicios'] ?? [];
             unset($diaData['servicios']);
             
+            // ✅ Valores por defecto para campos requeridos
             $diaData['plan_id'] = $planId;
+            
+            // ✅ Asegurar que 'orden' tenga un valor si viene null (tiene default en BD pero mejor asegurar)
+            if (!isset($diaData['orden']) || $diaData['orden'] === null) {
+                $diaData['orden'] = $diaData['numero_dia'] ?? ($index + 1);
+            }
+            
+            // ✅ Convertir tipos numéricos correctamente
+            if (isset($diaData['numero_dia']) && $diaData['numero_dia'] !== null) {
+                $diaData['numero_dia'] = (int) $diaData['numero_dia'];
+            }
+            
+            if (isset($diaData['orden']) && $diaData['orden'] !== null) {
+                $diaData['orden'] = (int) $diaData['orden'];
+            }
+            
+            if (isset($diaData['duracion_estimada_minutos']) && $diaData['duracion_estimada_minutos'] !== null) {
+                $diaData['duracion_estimada_minutos'] = (int) $diaData['duracion_estimada_minutos'];
+            }
+            
             $dia = PlanDia::create($diaData);
             
             // Agregar servicios al día
@@ -469,8 +522,48 @@ class PlanService
      */
     private function agregarServiciosADia(int $diaId, array $serviciosData): void
     {
-        foreach ($serviciosData as $servicioData) {
+        foreach ($serviciosData as $index => $servicioData) {
+            // ✅ Valores por defecto para campos requeridos
             $servicioData['plan_dia_id'] = $diaId;
+            
+            // ✅ Asegurar que 'orden' tenga un valor (requerido por la BD)
+            if (!isset($servicioData['orden']) || $servicioData['orden'] === null) {
+                $servicioData['orden'] = $index + 1; // Usar el índice + 1 como orden por defecto
+            }
+            
+            // ✅ Asegurar que 'es_opcional' tenga un valor (requerido por la BD)
+            if (!isset($servicioData['es_opcional'])) {
+                $servicioData['es_opcional'] = false;
+            } else {
+                // Convertir a boolean si viene como string
+                $servicioData['es_opcional'] = filter_var($servicioData['es_opcional'], FILTER_VALIDATE_BOOLEAN);
+            }
+            
+            // ✅ Asegurar que servicio_id existe
+            if (!isset($servicioData['servicio_id']) || $servicioData['servicio_id'] === null) {
+                throw new Exception('El servicio_id es requerido para agregar un servicio al día del plan');
+            }
+            
+            // ✅ Convertir tipos numéricos correctamente
+            if (isset($servicioData['duracion_minutos']) && $servicioData['duracion_minutos'] !== null) {
+                $servicioData['duracion_minutos'] = (int) $servicioData['duracion_minutos'];
+            }
+            
+            if (isset($servicioData['precio_adicional']) && $servicioData['precio_adicional'] !== null) {
+                $servicioData['precio_adicional'] = (float) $servicioData['precio_adicional'];
+            }
+            
+            if (isset($servicioData['capacidad_personas']) && $servicioData['capacidad_personas'] !== null) {
+                $servicioData['capacidad_personas'] = (int) $servicioData['capacidad_personas'];
+            }
+            
+            if (isset($servicioData['cantidad_personas']) && $servicioData['cantidad_personas'] !== null) {
+                $servicioData['cantidad_personas'] = (int) $servicioData['cantidad_personas'];
+            }
+            
+            // ✅ Convertir orden a entero
+            $servicioData['orden'] = (int) $servicioData['orden'];
+            
             PlanDiaServicio::create($servicioData);
         }
     }
