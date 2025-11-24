@@ -549,7 +549,7 @@ class PlanService
     }
     
     /**
-     * Guardar imagen convertida a WebP
+     * Guardar imagen convertida a WebP (o formato original si WebP no está disponible)
      */
     private function guardarImagenWebP(UploadedFile $archivo, string $directorio): string
     {
@@ -559,11 +559,6 @@ class PlanService
             if (!file_exists($rutaCompleta)) {
                 mkdir($rutaCompleta, 0755, true);
             }
-
-            // Nombre único
-            $nombreArchivo = uniqid() . '.webp';
-            $rutaArchivo = "{$directorio}/{$nombreArchivo}";
-            $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
 
             // Leer contenido binario
             $contenido = file_get_contents($archivo->getRealPath());
@@ -587,12 +582,51 @@ class PlanService
                 $imagen = $imagen->scaleDown(height: 1200);
             }
 
-            // Guardar como WebP con manejo de errores
-            $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
+            // Verificar si GD tiene soporte para WebP
+            $webpSupported = function_exists('imagewebp') && function_exists('imagecreatefromstring');
+            
+            if ($webpSupported) {
+                try {
+                    // Intentar guardar como WebP
+                    $nombreArchivo = uniqid() . '.webp';
+                    $rutaArchivo = "{$directorio}/{$nombreArchivo}";
+                    $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
+                    
+                    $imagen->toWebp(quality: 85)->save($rutaCompletaArchivo);
+                    
+                    // Verificar que el archivo se guardó correctamente
+                    if (file_exists($rutaCompletaArchivo)) {
+                        return $rutaArchivo;
+                    }
+                } catch (\Exception $webpError) {
+                    \Log::warning('No se pudo guardar como WebP, usando formato original: ' . $webpError->getMessage());
+                    // Continuar con formato original
+                }
+            }
+            
+            // Fallback: guardar en formato original (JPEG o PNG)
+            $extension = strtolower($archivo->getClientOriginalExtension() ?: 'jpg');
+            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                $extension = 'jpg'; // Default a JPEG si la extensión no es válida
+            }
+            
+            $nombreArchivo = uniqid() . '.' . $extension;
+            $rutaArchivo = "{$directorio}/{$nombreArchivo}";
+            $rutaCompletaArchivo = storage_path("app/public/{$rutaArchivo}");
+            
+            // Guardar en formato original con calidad optimizada
+            if ($extension === 'jpg' || $extension === 'jpeg') {
+                $imagen->toJpeg(quality: 85)->save($rutaCompletaArchivo);
+            } elseif ($extension === 'png') {
+                $imagen->toPng()->save($rutaCompletaArchivo);
+            } else {
+                // Para otros formatos, usar el método genérico
+                $archivo->storeAs($directorio, $nombreArchivo, 'public');
+            }
             
             // Verificar que el archivo se guardó correctamente
             if (!file_exists($rutaCompletaArchivo)) {
-                throw new Exception('No se pudo guardar el archivo WebP');
+                throw new Exception('No se pudo guardar el archivo');
             }
 
             return $rutaArchivo;
