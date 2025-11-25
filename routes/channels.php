@@ -62,3 +62,4 @@ Broadcast::channel('conversacion.{reservaId}', function ($user, $reservaId) {
     return false;
 }, ['middleware' => ['auth:sanctum']]);
 
+

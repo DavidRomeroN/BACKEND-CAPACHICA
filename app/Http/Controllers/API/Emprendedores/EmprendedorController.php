@@ -568,4 +568,45 @@ class EmprendedorController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Obtener los servicios de un emprendedor
+     */
+    public function getServicios($id): JsonResponse
+    {
+        try {
+            // Convertir ID a entero
+            $id = (int) $id;
+
+            // Buscar el emprendedor
+            $emprendedor = $this->emprendedorService->getById($id);
+
+            if (!$emprendedor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Emprendedor no encontrado'
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Cargar los servicios con sus relaciones
+            $servicios = $emprendedor->servicios()
+                ->with(['categorias', 'horarios', 'sliders'])
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $servicios
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error al obtener servicios del emprendedor: ' . $e->getMessage(), [
+                'emprendedor_id' => $id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno del servidor'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

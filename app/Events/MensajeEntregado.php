@@ -44,3 +44,4 @@ class MensajeEntregado implements ShouldBroadcast
     }
 }
 
+
