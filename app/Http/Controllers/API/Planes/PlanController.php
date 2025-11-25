@@ -497,12 +497,17 @@ class PlanController extends Controller
                 ], 404);
             }
 
-            $plan->estado_aprobacion = Plan::ESTADO_APROBACION_APROBADO;
-            $plan->save();
+            // ✅ CORRECCIÓN: Usar update() para asegurar que se persista correctamente
+            $plan->update([
+                'estado_aprobacion' => Plan::ESTADO_APROBACION_APROBADO
+            ]);
+
+            // ✅ Refrescar el modelo para asegurar que tiene los datos actualizados
+            $plan->refresh();
 
             return response()->json([
                 'success' => true,
-                'data' => $plan,
+                'data' => $plan->fresh(),
                 'message' => 'Plan aprobado exitosamente'
             ]);
         } catch (\Exception $e) {
@@ -538,12 +543,17 @@ class PlanController extends Controller
                 ], 404);
             }
 
-            $plan->estado_aprobacion = Plan::ESTADO_APROBACION_RECHAZADO;
-            $plan->save();
+            // ✅ CORRECCIÓN: Usar update() para asegurar que se persista correctamente
+            $plan->update([
+                'estado_aprobacion' => Plan::ESTADO_APROBACION_RECHAZADO
+            ]);
+
+            // ✅ Refrescar el modelo para asegurar que tiene los datos actualizados
+            $plan->refresh();
 
             return response()->json([
                 'success' => true,
-                'data' => $plan,
+                'data' => $plan->fresh(),
                 'message' => 'Plan rechazado exitosamente'
             ]);
         } catch (\Exception $e) {

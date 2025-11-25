@@ -573,12 +573,17 @@ class ServicioController extends Controller
             ], 404);
         }
 
-        $servicio->estado_aprobacion = Servicio::ESTADO_APROBACION_APROBADO;
-        $servicio->save();
+        // ✅ CORRECCIÓN: Usar update() para asegurar que se persista correctamente
+        $servicio->update([
+            'estado_aprobacion' => Servicio::ESTADO_APROBACION_APROBADO
+        ]);
+
+        // ✅ Refrescar el modelo para asegurar que tiene los datos actualizados
+        $servicio->refresh();
 
         return response()->json([
             'success' => true,
-            'data' => $servicio,
+            'data' => $servicio->fresh(['emprendedor', 'categorias', 'horarios', 'sliders']),
             'message' => 'Servicio aprobado exitosamente'
         ]);
     }
@@ -605,12 +610,17 @@ class ServicioController extends Controller
             ], 404);
         }
 
-        $servicio->estado_aprobacion = Servicio::ESTADO_APROBACION_RECHAZADO;
-        $servicio->save();
+        // ✅ CORRECCIÓN: Usar update() para asegurar que se persista correctamente
+        $servicio->update([
+            'estado_aprobacion' => Servicio::ESTADO_APROBACION_RECHAZADO
+        ]);
+
+        // ✅ Refrescar el modelo para asegurar que tiene los datos actualizados
+        $servicio->refresh();
 
         return response()->json([
             'success' => true,
-            'data' => $servicio,
+            'data' => $servicio->fresh(['emprendedor', 'categorias', 'horarios', 'sliders']),
             'message' => 'Servicio rechazado exitosamente'
         ]);
     }
