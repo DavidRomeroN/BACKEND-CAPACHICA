@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageUrlHelper;
 
 class Emprendedor extends Model
 {
@@ -341,5 +343,13 @@ class Emprendedor extends Model
         return $this->planesParticipando()
                    ->where('plans.id', $planId)
                    ->exists();
+    }
+
+    /**
+     * Accessor para obtener URLs completas de las imágenes
+     */
+    public function getImagenesUrlsAttribute(): array
+    {
+        return ImageUrlHelper::getImageUrls($this->imagenes, 'public');
     }
 }

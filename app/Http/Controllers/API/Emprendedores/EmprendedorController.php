@@ -442,10 +442,22 @@ class EmprendedorController extends Controller
             }
 
             Log::info('🎉 Actualización completada exitosamente');
+            
+            // Refrescar el modelo y cargar relaciones para asegurar URLs actualizadas
+            $emprendedorActualizado = $emprendedorActualizado->fresh();
+            $emprendedorActualizado->load([
+                'slidersPrincipales',
+                'slidersSecundarios',
+                'servicios.horarios',
+                'servicios.sliders',
+                'asociacion',
+                'administradores'
+            ]);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Emprendedor actualizado exitosamente',
-                'data' => $emprendedorActualizado // Retornar la versión fresca
+                'data' => $emprendedorActualizado // Retornar la versión fresca con relaciones
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {

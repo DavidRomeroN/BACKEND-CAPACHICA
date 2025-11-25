@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageUrlHelper;
 
 class Slider extends Model
 {
@@ -43,7 +44,6 @@ class Slider extends Model
 
     // Atributo dinámico para generar URL completa
     public function getUrlCompletaAttribute(): string {
-        if (filter_var($this->url, FILTER_VALIDATE_URL)) return $this->url;
-        return url(Storage::disk('media')->url($this->url));
+        return ImageUrlHelper::getImageUrl($this->url, 'media') ?? '';
     }
 }

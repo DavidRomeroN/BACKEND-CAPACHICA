@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageUrlHelper;
 
 class Plan extends Model
 {
@@ -285,16 +286,11 @@ class Plan extends Model
 
     // Obtener URL de imagen principal
     public function getImagenPrincipalUrlAttribute(): ?string {
-        if (!$this->imagen_principal) return null;
-        if (filter_var($this->imagen_principal, FILTER_VALIDATE_URL)) return $this->imagen_principal;
-        return Storage::disk('public')->url($this->imagen_principal);
+        return ImageUrlHelper::getImageUrl($this->imagen_principal, 'public');
     }
 
     public function getImagenesGaleriaUrlsAttribute(): array {
-        if (!$this->imagenes_galeria || !is_array($this->imagenes_galeria)) return [];
-        return collect($this->imagenes_galeria)->map(
-            fn($p) => filter_var($p, FILTER_VALIDATE_URL) ? $p : Storage::disk('public')->url($p)
-        )->all();
+        return ImageUrlHelper::getImageUrls($this->imagenes_galeria, 'public');
     }
 
     // MÉTODO CORREGIDO - Calcular precio total basado en servicios de los días

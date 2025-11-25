@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-// Servicio.php
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageUrlHelper;
 
 class Servicio extends Model
 {
@@ -139,17 +139,11 @@ class Servicio extends Model
 
 
     public function getImagenUrlAttribute(): ?string {
-        if (!isset($this->imagen) || !$this->imagen) return null;
-        return filter_var($this->imagen, FILTER_VALIDATE_URL)
-            ? $this->imagen
-            : Storage::disk('public')->url($this->imagen);
+        return ImageUrlHelper::getImageUrl($this->imagen ?? null, 'public');
     }
 
     public function getGaleriaUrlsAttribute(): array {
-        if (!isset($this->galeria) || !is_array($this->galeria)) return [];
-        return collect($this->galeria)->map(fn($p) =>
-        filter_var($p, FILTER_VALIDATE_URL) ? $p : Storage::disk('public')->url($p)
-        )->all();
+        return ImageUrlHelper::getImageUrls($this->galeria ?? null, 'public');
     }
 
     // Scopes para estado de aprobación
