@@ -22,6 +22,7 @@ use App\Http\Controllers\API\Planes\PlanInscripcionController;
 use App\Http\Controllers\API\Planes\PlanEmprendedoresController; // NUEVO
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\API\Reservas\CarritoReservaController;
+use App\Http\Controllers\API\ChatController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -811,6 +812,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}/estado', [ReservaServicioController::class, 'cambiarEstado']);
         Route::get('/calendario', [ReservaServicioController::class, 'calendario']);
         Route::get('/verificar-disponibilidad', [ReservaServicioController::class, 'verificarDisponibilidad']);
+    });
+
+    // ===== RUTAS DE CHAT =====
+    Route::post('/reservas/{reserva_id}/conversacion', [ChatController::class, 'crearConversacion']);
+    Route::post('/reservas/{reserva_id}/mensajes', [ChatController::class, 'enviarMensaje']);
+    Route::get('/reservas/{reserva_id}/mensajes', [ChatController::class, 'mensajes']);
+    Route::get('/reservas/{reserva_id}/mi-info', [ChatController::class, 'miInfoEnChat']);
+
+    // Búsqueda de mensajes en el chat (no restringido)
+    Route::get('/chat/buscar', [ChatController::class, 'buscarMensajesChat']);
+
+    // Nuevas rutas para tracking de mensajes
+    Route::patch('/mensajes/{mensaje_id}/entregado', [ChatController::class, 'marcarComoEntregado']);
+    Route::patch('/mensajes/{mensaje_id}/leido', [ChatController::class, 'marcarComoLeido']);
+
+    // Rutas solo para admins
+    Route::prefix('admin/chat')->middleware('role:admin')->group(function () {
+        Route::get('/historial', [ChatController::class, 'historialCompleto']);
+        Route::get('/buscar', [ChatController::class, 'buscarMensajes']);
+        Route::get('/estadisticas', [ChatController::class, 'estadisticas']);
     });
 
 

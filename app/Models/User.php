@@ -237,6 +237,25 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Verificar si el usuario es moderador
+     */
+    public function esModerador(): bool
+    {
+        return $this->emprendimientos()
+            ->wherePivot('rol', 'ayudante')
+            ->orWherePivot('rol', 'moderador')
+            ->exists();
+    }
+
+    /**
+     * Verificar si el usuario es emprendedor
+     */
+    public function esEmprendedor(): bool
+    {
+        return $this->hasRole('emprendedor') || $this->emprendimientos()->exists();
+    }
+
+    /**
      * Send the password reset notification.
      *
      * @param  string  $token
